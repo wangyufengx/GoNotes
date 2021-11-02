@@ -1,2 +1,2 @@
-# Introduction
+# Go 内存模型翻译
 
