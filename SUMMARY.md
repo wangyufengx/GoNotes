@@ -9,3 +9,6 @@
 
 * [Go 内存模型](memory/README.md)
 
+* [其他](other/README.md)
+  * [Gitbook安装使用教程](other/GitBook安装使用教程.md)
+
