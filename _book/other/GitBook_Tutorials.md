@@ -114,7 +114,7 @@ gitbook serve
 
 https://docs.gitbook.com/integrations/git-sync/enabling-github-sync
 
-此时你的电子书已搭建完成。可点击`Publish`可公开笔记并且可在get the link`输入框下看到笔记的网址。
+此时你的电子书已搭建完成。可点击`Publish`可公开笔记并且可在`get the link`输入框下看到笔记的网址。
 
 ### 参考文档
 

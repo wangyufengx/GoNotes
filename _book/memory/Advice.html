@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>概述 · GitBook</title>
+        <title>建议 · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -61,10 +61,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="../memory/" />
+    <link rel="next" href="happens_before.html" />
     
     
-    <link rel="prev" href="./" />
+    <link rel="prev" href="Introduction.html" />
     
 
     </head>
@@ -106,9 +106,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2" data-path="./">
+        <li class="chapter " data-level="1.2" data-path="../module/">
             
-                <a href="./">
+                <a href="../module/">
             
                     
                     Go Module 中文文档
@@ -120,9 +120,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter active" data-level="1.2.1" data-path="Introduction.html">
+        <li class="chapter " data-level="1.2.1" data-path="../module/Introduction.html">
             
-                <a href="Introduction.html">
+                <a href="../module/Introduction.html">
             
                     
                     概述
@@ -138,9 +138,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3" data-path="../memory/">
+        <li class="chapter " data-level="1.3" data-path="./">
             
-                <a href="../memory/">
+                <a href="./">
             
                     
                     Go 内存模型
@@ -152,9 +152,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.3.1" data-path="../memory/Introduction.html">
+        <li class="chapter " data-level="1.3.1" data-path="Introduction.html">
             
-                <a href="../memory/Introduction.html">
+                <a href="Introduction.html">
             
                     
                     概述
@@ -165,9 +165,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.2" data-path="../memory/Advice.html">
+        <li class="chapter active" data-level="1.3.2" data-path="Advice.html">
             
-                <a href="../memory/Advice.html">
+                <a href="Advice.html">
             
                     
                     建议
@@ -178,9 +178,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.3" data-path="../memory/happens_before.html">
+        <li class="chapter " data-level="1.3.3" data-path="happens_before.html">
             
-                <a href="../memory/happens_before.html">
+                <a href="happens_before.html">
             
                     
                     先行发生
@@ -191,9 +191,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.4" data-path="../memory/Synchronization.html">
+        <li class="chapter " data-level="1.3.4" data-path="Synchronization.html">
             
-                <a href="../memory/Synchronization.html">
+                <a href="Synchronization.html">
             
                     
                     同步
@@ -204,9 +204,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.5" data-path="../memory/Incorrect_synchronization.html">
+        <li class="chapter " data-level="1.3.5" data-path="Incorrect_synchronization.html">
             
-                <a href="../memory/Incorrect_synchronization.html">
+                <a href="Incorrect_synchronization.html">
             
                     
                     错误的同步
@@ -284,7 +284,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >概述</a>
+        <a href=".." >建议</a>
     </h1>
 </div>
 
@@ -299,7 +299,12 @@
     
                                 <section class="normal markdown-section">
                                 
-                                
+                                <h1 id="&#x5EFA;&#x8BAE;">&#x5EFA;&#x8BAE;</h1>
+<p>&#x7A0B;&#x5E8F;&#x4E2D;&#x591A;&#x4E2A;goroutine&#x540C;&#x65F6;&#x8BBF;&#x95EE;&#x4FEE;&#x6539;&#x6570;&#x636E;&#x5FC5;&#x987B;&#x5E8F;&#x5217;&#x5316;&#x8FD9;&#x79CD;&#x8BBF;&#x95EE;&#x3002;</p>
+<p>&#x8981;&#x5E8F;&#x5217;&#x5316;&#x8BBF;&#x95EE;&#xFF0C;&#x8BF7;&#x4F7F;&#x7528;&#x901A;&#x9053;&#x64CD;&#x4F5C;&#x6216;&#x5176;&#x4ED6;&#x540C;&#x6B65;&#x539F;&#x8BED;&#xFF08;&#x4F8B;&#x5982; sync &#x548C; sync/atomic &#x5305;&#x4E2D;&#x7684;&#x539F;&#x8BED;&#xFF09;&#x4FDD;&#x62A4;&#x6570;&#x636E;&#x3002;</p>
+<p>&#x5982;&#x679C;&#x60A8;&#x5FC5;&#x987B;&#x9605;&#x8BFB;&#x672C;&#x6587;&#x6863;&#x7684;&#x5176;&#x4F59;&#x90E8;&#x5206;&#x624D;&#x80FD;&#x7406;&#x89E3;&#x7A0B;&#x5E8F;&#x7684;&#x884C;&#x4E3A;&#xFF0C;&#x90A3;&#x4E48;&#x60A8;&#x592A;&#x806A;&#x660E;&#x4E86;&#x3002;</p>
+<p>&#x522B;&#x90A3;&#x4E48;&#x806A;&#x660E;&#x3002;</p>
+
                                 
                                 </section>
                             
@@ -326,12 +331,12 @@
 
             
                 
-                <a href="./" class="navigation navigation-prev " aria-label="Previous page: Go Module 中文文档">
+                <a href="Introduction.html" class="navigation navigation-prev " aria-label="Previous page: 概述">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="../memory/" class="navigation navigation-next " aria-label="Next page: Go 内存模型">
+                <a href="happens_before.html" class="navigation navigation-next " aria-label="Next page: 先行发生">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -342,7 +347,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"概述","level":"1.2.1","depth":2,"next":{"title":"Go 内存模型","level":"1.3","depth":1,"path":"memory/README.md","ref":"memory/README.md","articles":[{"title":"概述","level":"1.3.1","depth":2,"path":"memory/Introduction.md","ref":"memory/Introduction.md","articles":[]},{"title":"建议","level":"1.3.2","depth":2,"path":"memory/Advice.md","ref":"memory/Advice.md","articles":[]},{"title":"先行发生","level":"1.3.3","depth":2,"path":"memory/happens_before.md","ref":"memory/happens_before.md","articles":[]},{"title":"同步","level":"1.3.4","depth":2,"path":"memory/Synchronization.md","ref":"memory/Synchronization.md","articles":[]},{"title":"错误的同步","level":"1.3.5","depth":2,"path":"memory/Incorrect_synchronization.md","ref":"memory/Incorrect_synchronization.md","articles":[]}]},"previous":{"title":"Go Module 中文文档","level":"1.2","depth":1,"path":"module/README.md","ref":"module/README.md","articles":[{"title":"概述","level":"1.2.1","depth":2,"path":"module/Introduction.md","ref":"module/Introduction.md","articles":[]}]},"dir":"neutral"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["expandable-chapters","livereload"],"pluginsConfig":{"expandable-chapters":{},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"module/Introduction.md","mtime":"2021-10-30T15:44:20.351Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-11-05T14:32:07.673Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"建议","level":"1.3.2","depth":2,"next":{"title":"先行发生","level":"1.3.3","depth":2,"path":"memory/happens_before.md","ref":"memory/happens_before.md","articles":[]},"previous":{"title":"概述","level":"1.3.1","depth":2,"path":"memory/Introduction.md","ref":"memory/Introduction.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["expandable-chapters","livereload"],"pluginsConfig":{"expandable-chapters":{},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"memory/Advice.md","mtime":"2021-11-05T11:43:08.923Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-11-05T14:32:07.673Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

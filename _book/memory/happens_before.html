@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Go 内存模型 · GitBook</title>
+        <title>先行发生 · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -61,10 +61,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="Introduction.html" />
+    <link rel="next" href="Synchronization.html" />
     
     
-    <link rel="prev" href="../module/Introduction.html" />
+    <link rel="prev" href="Advice.html" />
     
 
     </head>
@@ -138,7 +138,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.3" data-path="./">
+        <li class="chapter " data-level="1.3" data-path="./">
             
                 <a href="./">
             
@@ -178,7 +178,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.3" data-path="happens_before.html">
+        <li class="chapter active" data-level="1.3.3" data-path="happens_before.html">
             
                 <a href="happens_before.html">
             
@@ -284,7 +284,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >Go 内存模型</a>
+        <a href=".." >先行发生</a>
     </h1>
 </div>
 
@@ -299,8 +299,24 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="go-&#x5185;&#x5B58;&#x6A21;&#x578B;&#x7FFB;&#x8BD1;">Go &#x5185;&#x5B58;&#x6A21;&#x578B;&#x7FFB;&#x8BD1;</h1>
-<p>&#x539F;&#x6587;&#x5730;&#x5740;<a href="https://golang.google.cn/ref/mem" target="_blank">https://golang.google.cn/ref/mem</a></p>
+                                <h1 id="&#x5148;&#x884C;&#x53D1;&#x751F;">&#x5148;&#x884C;&#x53D1;&#x751F;</h1>
+<p>&#x5728;&#x5355;&#x4E2A; goroutine &#x4E2D;&#xFF0C;&#x8BFB;&#x53D6;&#x548C;&#x5199;&#x5165;&#x5FC5;&#x987B;&#x6309;&#x7167;&#x7A0B;&#x5E8F;&#x6307;&#x5B9A;&#x7684;&#x987A;&#x5E8F;&#x6267;&#x884C;&#x3002;&#x4E5F;&#x5C31;&#x662F;&#x8BF4;&#xFF0C;&#x53EA;&#x6709;&#x5F53;&#x91CD;&#x65B0;&#x6392;&#x5E8F;&#x4E0D;&#x4F1A;&#x6539;&#x53D8;&#x8BED;&#x8A00;&#x89C4;&#x8303;&#x5B9A;&#x4E49;&#x7684; goroutine &#x4E2D;&#x7684;&#x884C;&#x4E3A;&#x65F6;&#xFF0C;&#x7F16;&#x8BD1;&#x5668;&#x548C;&#x5904;&#x7406;&#x5668;&#x624D;&#x53EF;&#x4EE5;&#x91CD;&#x65B0;&#x6392;&#x5E8F;&#x5728;&#x5355;&#x4E2A; goroutine &#x4E2D;&#x6267;&#x884C;&#x7684;&#x8BFB;&#x53D6;&#x548C;&#x5199;&#x5165;&#x3002;&#x7531;&#x4E8E;&#x8FD9;&#x79CD;&#x91CD;&#x65B0;&#x6392;&#x5E8F;&#xFF0C;&#x4E00;&#x4E2A;goroutine&#x89C2;&#x5BDF;&#x5230;&#x7684;&#x6267;&#x884C;&#x987A;&#x5E8F;&#x53EF;&#x80FD;&#x4E0E;&#x53E6;&#x4E00;&#x4E2A;goroutine&#x89C2;&#x5BDF;&#x5230;&#x7684;&#x6267;&#x884C;&#x987A;&#x5E8F;&#x4E0D;&#x540C;&#x3002;&#x4F8B;&#x5982;&#xFF0C;&#x5982;&#x679C;&#x4E00;&#x4E2A; goroutine &#x6267;&#x884C; <code>a = 1; b = 2;</code>&#xFF0C;&#x53E6;&#x4E00;&#x4E2A;&#x53EF;&#x80FD;&#x4F1A;&#x5728; <code>a</code> &#x7684;&#x66F4;&#x65B0;&#x503C;&#x4E4B;&#x524D;&#x89C2;&#x5BDF;&#x5230; <code>b</code> &#x7684;&#x66F4;&#x65B0;&#x503C;&#x3002;</p>
+<p>&#x4E3A;&#x4E86;&#x6307;&#x5B9A;&#x8BFB;&#x548C;&#x5199;&#x7684;&#x8981;&#x6C42;&#xFF0C;&#x6211;&#x4EEC;&#x5B9A;&#x4E49;&#x4E86;&#x5728;Go&#x7A0B;&#x5E8F;&#x4E2D;&#x5185;&#x5B58;&#x64CD;&#x4F5C;&#x6267;&#x884C;&#x7684;&#x90E8;&#x5206;&#x987A;&#x5E8F;&#x3002;&#x5982;&#x679C;&#x4E8B;&#x4EF6; e1 &#x53D1;&#x751F;&#x5728;&#x4E8B;&#x4EF6; e2 &#x4E4B;&#x524D;&#xFF0C;&#x90A3;&#x4E48;&#x6211;&#x4EEC;&#x8BF4; e2 &#x53D1;&#x751F;&#x5728; e1 &#x4E4B;&#x540E;&#x3002;&#x53E6;&#x5916;&#xFF0C;&#x5982;&#x679C; e1 &#x6CA1;&#x6709;&#x5728; e2 &#x4E4B;&#x524D;&#x53D1;&#x751F;&#xFF0C;&#x4E5F;&#x6CA1;&#x6709;&#x5728; e2 &#x4E4B;&#x540E;&#x53D1;&#x751F;&#xFF0C;&#x90A3;&#x4E48;&#x6211;&#x4EEC;&#x8BF4; e1 &#x548C; e2 &#x540C;&#x65F6;&#x53D1;&#x751F;&#x3002;</p>
+<p>&#x5728;&#x5355;&#x4E2A; goroutine &#x4E2D;&#xFF0C;happens-before &#x987A;&#x5E8F;&#x662F;&#x7A0B;&#x5E8F;&#x8868;&#x8FBE;&#x7684;&#x987A;&#x5E8F;&#x3002;</p>
+<p>&#x5982;&#x679C;&#x4EE5;&#x4E0B;&#x4E24;&#x9879;&#x90FD;&#x6210;&#x7ACB;&#xFF0C;&#x5219;&#x5141;&#x8BB8;&#x53D8;&#x91CF; <code>v</code> &#x7684;&#x8BFB;&#x53D6; <em>r</em> &#x89C2;&#x5BDF;&#x5199;&#x5165; <em>w</em> &#x5230; <code>v</code>&#xFF1A;</p>
+<ol>
+<li><em>r</em> &#x4E0D;&#x4F1A;&#x5728; <em>w</em> &#x4E4B;&#x524D;&#x53D1;&#x751F;&#x3002;</li>
+<li>&#x6CA1;&#x6709;&#x5176;&#x4ED6;&#x5199; <em>w&apos;</em> &#x5230; <code>v</code> &#x53D1;&#x751F;&#x5728; <em>w</em> &#x4E4B;&#x540E;&#x4F46;&#x5728; <em>r</em> &#x4E4B;&#x524D;&#x3002;</li>
+</ol>
+<p>&#x4E3A;&#x4E86;&#x4FDD;&#x8BC1;&#x5BF9;&#x53D8;&#x91CF; <code>v</code> &#x7684;&#x8BFB;&#x53D6; <em>r</em> &#x89C2;&#x5BDF;&#x5230;&#x5BF9; <code>v</code> &#x7684;&#x7279;&#x5B9A;&#x5199;&#x5165; <em>w</em>&#xFF0C;&#x8BF7;&#x786E;&#x4FDD; <em>w</em> &#x662F;&#x552F;&#x4E00;&#x5141;&#x8BB8;&#x89C2;&#x5BDF;&#x7684;&#x5199;&#x5165; <em>r</em>&#x3002; &#x4E5F;&#x5C31;&#x662F;&#x8BF4;&#xFF0C;<em>r</em> <em>&#x4FDD;&#x8BC1;</em>&#x89C2;&#x5BDF;&#x5230; <em>w</em> &#x5982;&#x679C;&#x4EE5;&#x4E0B;&#x4E24;&#x4E2A;&#x90FD;&#x6210;&#x7ACB;&#xFF1A;</p>
+<ol>
+<li><em>w</em> &#x53D1;&#x751F;&#x5728; <em>r</em> &#x4E4B;&#x524D;&#x3002;</li>
+<li>&#x5BF9;&#x5171;&#x4EAB;&#x53D8;&#x91CF; <code>v</code> &#x7684;&#x4EFB;&#x4F55;&#x5176;&#x4ED6;&#x5199;&#x5165;&#x53D1;&#x751F;&#x5728; <em>w</em> &#x4E4B;&#x524D;&#x6216; <em>r</em> &#x4E4B;&#x540E;&#x3002;</li>
+</ol>
+<p>&#x8FD9;&#x5BF9;&#x6761;&#x4EF6;&#x6BD4;&#x7B2C;&#x4E00;&#x5BF9;&#x5F3A;&#xFF1B; &#x5B83;&#x8981;&#x6C42;&#x6CA1;&#x6709;&#x5176;&#x4ED6;&#x5199;&#x5165;&#x4E0E; <em>w</em> &#x6216; <em>r</em> &#x540C;&#x65F6;&#x53D1;&#x751F;&#x3002;</p>
+<p>&#x5728;&#x5355;&#x4E2A; goroutine &#x4E2D;&#xFF0C;&#x6CA1;&#x6709;&#x5E76;&#x53D1;&#xFF0C;&#x56E0;&#x6B64;&#x4E24;&#x4E2A;&#x5B9A;&#x4E49;&#x662F;&#x7B49;&#x4EF7;&#x7684;&#xFF1A;&#x8BFB;&#x53D6; <em>r</em> &#x89C2;&#x5BDF;&#x6700;&#x8FD1;&#x5199;&#x5165; <em>w</em> &#x5230; <code>v</code> &#x7684;&#x503C;&#x3002; &#x5F53;&#x591A;&#x4E2A; goroutine &#x8BBF;&#x95EE;&#x5171;&#x4EAB;&#x53D8;&#x91CF; <code>v</code> &#x65F6;&#xFF0C;&#x5B83;&#x4EEC;&#x5FC5;&#x987B;&#x4F7F;&#x7528;&#x540C;&#x6B65;&#x4E8B;&#x4EF6;&#x6765;&#x5EFA;&#x7ACB;happens-before &#x6761;&#x4EF6;&#xFF0C;&#x4EE5;&#x786E;&#x4FDD;&#x8BFB;&#x53D6;&#x89C2;&#x5BDF;&#x5230;&#x6240;&#x9700;&#x7684;&#x5199;&#x5165;&#x3002;</p>
+<p>&#x4F7F;&#x7528; v &#x7C7B;&#x578B;&#x7684;&#x96F6;&#x503C;&#x521D;&#x59CB;&#x5316;&#x53D8;&#x91CF; v &#x7684;&#x884C;&#x4E3A;&#x7C7B;&#x4F3C;&#x4E8E;&#x5185;&#x5B58;&#x6A21;&#x578B;&#x4E2D;&#x7684;&#x5199;&#x5165;&#x3002;</p>
+<p>&#x5BF9;&#x5927;&#x4E8E;&#x5355;&#x4E2A;&#x673A;&#x5668;&#x7801;&#x7684;&#x503C;&#x7684;&#x8BFB;&#x53D6;&#x548C;&#x5199;&#x5165;&#x8868;&#x73B0;&#x4E3A;&#x672A;&#x6307;&#x5B9A;&#x987A;&#x5E8F;&#x7684;&#x591A;&#x4E2A;&#x673A;&#x5668;&#x7801;&#x5927;&#x5C0F;&#x7684;&#x64CD;&#x4F5C;&#x3002;</p>
 
                                 
                                 </section>
@@ -328,12 +344,12 @@
 
             
                 
-                <a href="../module/Introduction.html" class="navigation navigation-prev " aria-label="Previous page: 概述">
+                <a href="Advice.html" class="navigation navigation-prev " aria-label="Previous page: 建议">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="Introduction.html" class="navigation navigation-next " aria-label="Next page: 概述">
+                <a href="Synchronization.html" class="navigation navigation-next " aria-label="Next page: 同步">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -344,7 +360,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Go 内存模型","level":"1.3","depth":1,"next":{"title":"概述","level":"1.3.1","depth":2,"path":"memory/Introduction.md","ref":"memory/Introduction.md","articles":[]},"previous":{"title":"概述","level":"1.2.1","depth":2,"path":"module/Introduction.md","ref":"module/Introduction.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["expandable-chapters","livereload"],"pluginsConfig":{"expandable-chapters":{},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"memory/README.md","mtime":"2021-11-04T12:20:02.260Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-11-05T14:32:07.673Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"先行发生","level":"1.3.3","depth":2,"next":{"title":"同步","level":"1.3.4","depth":2,"path":"memory/Synchronization.md","ref":"memory/Synchronization.md","articles":[]},"previous":{"title":"建议","level":"1.3.2","depth":2,"path":"memory/Advice.md","ref":"memory/Advice.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["expandable-chapters","livereload"],"pluginsConfig":{"expandable-chapters":{},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"memory/happens_before.md","mtime":"2021-11-05T11:43:37.739Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-11-05T14:32:07.673Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
