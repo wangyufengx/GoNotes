@@ -47,13 +47,49 @@
 4. 调用运行时初始化函数runtime.schedinit进行初始化。
 5. 在m0上调度第一个G，这个G运行runtime.main函数。（runtime.main函数会拉起运行时的监控线程，然后调用main包的初始化函数，最后执行main函数。）
 
+#### 阻塞
+
+- 阻塞 I/O
+- select操作
+- 阻塞在channel
+- 等待锁
+- 主动调用 runtime.Gosched()
+
 #### 抢占调度
 
+##### 原因
 
+1. 不让某个G长久地被系统调用阻塞，阻碍其他G运行。
+2. 不让某个G一直占用某个M不释放。
+3. 避免全局队列里面的G得不到执行。
+
+##### 策略
+
+1. 在进入系统调用（syscall）前后，各封装一层代码检测G的状态，当检测到当前G已经被监控线程抢占调度，则M停止执行当前G,进行调度切换。
+2. 监控线程经过一段时间检测感知到P运行超过一定时间，取消P和M的关联，这也是一种更高层次的调度。
+3. 监控线程经过一段时间检测感知到G一直运行，超过了一定的时间，设置G标记。G执行栈扩展逻辑检测到抢占标记，根据相关条件决定是否抢占调度。
+
+#### 监控线程（sysmon）
+
+sysmon每20us~10ms启动一次，sysmon主要完成如下工作：
+
+- 释放闲置超过5分钟的span物理内存；
+- 如果超过2分钟没有垃圾回收，强制执行；
+- 将长时间未处理的netpoll结果添加到任务队列；
+- 向长时间运行的G任务发出抢占调度；
+- 收回因syscall长时间阻塞的P；
+
+### CSP并发模型
+
+CSP模型是上个世纪七十年代提出的，用于描述两个独立的并发实体通过共享的通讯 channel(管道)进行通信的并发模型。 CSP中channel是第一类对象，它不关注发送消息的实体，而关注与发送消息时使用的channel。
+
+#### golang CSP
+
+Golang 就是借用CSP模型的一些概念为之实现并发进行理论支持，其实从实际上出发，go语言并没有，完全实现了CSP模型的所有理论，仅仅是借用了 process和channel这两个概念。process是在go语言上的表现就是 goroutine 是实际并发执行的实体，每个实体之间是通过channel通讯来实现数据共享。
 
 ### 参考资料
 
-[[The Go scheduler](https://morsmachine.dk/go-scheduler)]
+[The Go scheduler](https://morsmachine.dk/go-scheduler)
 
 [golang scheduler](https://yizhi.ren/2019/06/03/goscheduler/)
 
@@ -64,3 +100,11 @@
 [Scalable Go Scheduler Design Doc](https://docs.google.com/document/d/1TTj4T2JO42uD5ID9e89oa0sLKhJYD0Y_kqxDv3I3XMw/edit#)
 
 [Golang调度器GMP原理与调度全分析](https://studygolang.com/articles/26921)
+
+[详解Go语言调度循环源码实现](https://www.cnblogs.com/luozhiyun/p/14426737.html)
+
+[Go 调度模型 GPM](https://studygolang.com/articles/29179)
+
+[Golang 调度器和 GMP 模型](https://segmentfault.com/a/1190000040080290)
+
+[Golang CSP并发模型](https://studygolang.com/articles/5155)
