@@ -1,0 +1,810 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Go 抢占式调度程序设计文档 · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-expandable-chapters/expandable-chapters.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="Interview_questions/" />
+    
+    
+    <link rel="prev" href="Scalable_Go_Scheduler_Design_Doc.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    golang 笔记
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="Scalable_Go_Scheduler_Design_Doc.html">
+            
+                <a href="Scalable_Go_Scheduler_Design_Doc.html">
+            
+                    
+                    可扩展的 Go 调度程序设计文档[译]
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.2.2" data-path="Go_Preemptive_Scheduler_Design_Doc.html">
+            
+                <a href="Go_Preemptive_Scheduler_Design_Doc.html">
+            
+                    
+                    Go 抢占式调度程序设计文档
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="Interview_questions/">
+            
+                <a href="Interview_questions/">
+            
+                    
+                    golang面试题整理
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.3.1" data-path="Interview_questions/compound_data_type.html">
+            
+                <a href="Interview_questions/compound_data_type.html">
+            
+                    
+                    复合数据类型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3.2" data-path="Interview_questions/select.html">
+            
+                <a href="Interview_questions/select.html">
+            
+                    
+                    select
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3.3" data-path="Interview_questions/gc.html">
+            
+                <a href="Interview_questions/gc.html">
+            
+                    
+                    垃圾收集
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3.4" data-path="Interview_questions/golang_scheduler.html">
+            
+                <a href="Interview_questions/golang_scheduler.html">
+            
+                    
+                    golang 调度
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3.5" data-path="Interview_questions/malloc.html">
+            
+                <a href="Interview_questions/malloc.html">
+            
+                    
+                    内存分配
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3.6" data-path="Interview_questions/trap.html">
+            
+                <a href="Interview_questions/trap.html">
+            
+                    
+                    陷阱
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../module/">
+            
+                <a href="../module/">
+            
+                    
+                    Go Module 中文文档
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../module/Introduction.html">
+            
+                <a href="../module/Introduction.html">
+            
+                    
+                    概述
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../memory/">
+            
+                <a href="../memory/">
+            
+                    
+                    Go 内存模型
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="../memory/Introduction.html">
+            
+                <a href="../memory/Introduction.html">
+            
+                    
+                    概述
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../memory/Advice.html">
+            
+                <a href="../memory/Advice.html">
+            
+                    
+                    建议
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="../memory/happens_before.html">
+            
+                <a href="../memory/happens_before.html">
+            
+                    
+                    先行发生
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4" data-path="../memory/Synchronization.html">
+            
+                <a href="../memory/Synchronization.html">
+            
+                    
+                    同步
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.5" data-path="../memory/Incorrect_synchronization.html">
+            
+                <a href="../memory/Incorrect_synchronization.html">
+            
+                    
+                    错误的同步
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="../SRE/">
+            
+                <a href="../SRE/">
+            
+                    
+                    SRE Google运维解密
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.5.1" data-path="../SRE/Preface.html">
+            
+                <a href="../SRE/Preface.html">
+            
+                    
+                    序言
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.2" data-path="../SRE/part_one.html">
+            
+                <a href="../SRE/part_one.html">
+            
+                    
+                    第一章 介绍
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.3" data-path="../SRE/part_two.html">
+            
+                <a href="../SRE/part_two.html">
+            
+                    
+                    第二章 Google生产环境：SRE视角
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.4" data-path="../SRE/part_three.html">
+            
+                <a href="../SRE/part_three.html">
+            
+                    
+                    第三章 拥抱风险
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.5" data-path="../SRE/part_four.html">
+            
+                <a href="../SRE/part_four.html">
+            
+                    
+                    第四章 服务质量目标
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" data-path="../docker/">
+            
+                <a href="../docker/">
+            
+                    
+                    docker笔记
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.6.1" data-path="../docker/docker_engine_api.html">
+            
+                <a href="../docker/docker_engine_api.html">
+            
+                    
+                    docker images api
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" data-path="../docker_docs/">
+            
+                <a href="../docker_docs/">
+            
+                    
+                    docker 命令官方文档
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.7.1" data-path="../docker_docs/image/">
+            
+                <a href="../docker_docs/image/">
+            
+                    
+                    docker image
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.7.1.1" data-path="../docker_docs/image/list_images.html">
+            
+                <a href="../docker_docs/image/list_images.html">
+            
+                    
+                    镜像列表
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="../kubernetes/">
+            
+                <a href="../kubernetes/">
+            
+                    
+                    kubernetes
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.8.1" data-path="../kubernetes/apiVersion.html">
+            
+                <a href="../kubernetes/apiVersion.html">
+            
+                    
+                    apiVersion
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8.2" data-path="../kubernetes/image_pull_policy.html">
+            
+                <a href="../kubernetes/image_pull_policy.html">
+            
+                    
+                    镜像拉取策略
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9" data-path="../alpine/">
+            
+                <a href="../alpine/">
+            
+                    
+                    alpine
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.9.1" data-path="../alpine/alpine.html">
+            
+                <a href="../alpine/alpine.html">
+            
+                    
+                    alpine
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.10" data-path="../sonar/">
+            
+                <a href="../sonar/">
+            
+                    
+                    sonar
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.10.1" data-path="../sonar/sonarqube docker方式安装部署.html">
+            
+                <a href="../sonar/sonarqube docker方式安装部署.html">
+            
+                    
+                    sonarqube docker方式安装部署
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.11" data-path="../other/">
+            
+                <a href="../other/">
+            
+                    
+                    其他
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.11.1" data-path="../other/GitBook_Tutorials.html">
+            
+                <a href="../other/GitBook_Tutorials.html">
+            
+                    
+                    Gitbook安装使用教程
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >Go 抢占式调度程序设计文档</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="go-&#x62A2;&#x5360;&#x5F0F;&#x8C03;&#x5EA6;&#x7A0B;&#x5E8F;&#x8BBE;&#x8BA1;&#x6587;&#x6863;">Go &#x62A2;&#x5360;&#x5F0F;&#x8C03;&#x5EA6;&#x7A0B;&#x5E8F;&#x8BBE;&#x8BA1;&#x6587;&#x6863;</h1>
+<h3 id="&#x539F;&#x6587;&#x5730;&#x5740;">&#x539F;&#x6587;&#x5730;&#x5740;</h3>
+<p><a href="https://docs.google.com/document/d/1ETuA2IOmnaQ4j81AtTGT40Y4_Jr6_IDASEKg0t0dBR8/edit#heading=h.3pilqarbrc9h" target="_blank">https://docs.google.com/document/d/1ETuA2IOmnaQ4j81AtTGT40Y4_Jr6_IDASEKg0t0dBR8/edit#heading=h.3pilqarbrc9h</a></p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="Scalable_Go_Scheduler_Design_Doc.html" class="navigation navigation-prev " aria-label="Previous page: 可扩展的 Go 调度程序设计文档[译]">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="Interview_questions/" class="navigation navigation-next " aria-label="Next page: golang面试题整理">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Go 抢占式调度程序设计文档","level":"1.2.2","depth":2,"next":{"title":"golang面试题整理","level":"1.2.3","depth":2,"path":"golang/Interview_questions/README.md","ref":"golang/Interview_questions/README.md","articles":[{"title":"复合数据类型","level":"1.2.3.1","depth":3,"path":"golang/Interview_questions/compound_data_type.md","ref":"golang/Interview_questions/compound_data_type.md","articles":[]},{"title":"select","level":"1.2.3.2","depth":3,"path":"golang/Interview_questions/select.md","ref":"golang/Interview_questions/select.md","articles":[]},{"title":"垃圾收集","level":"1.2.3.3","depth":3,"path":"golang/Interview_questions/gc.md","ref":"golang/Interview_questions/gc.md","articles":[]},{"title":"golang 调度","level":"1.2.3.4","depth":3,"path":"golang/Interview_questions/golang_scheduler.md","ref":"golang/Interview_questions/golang_scheduler.md","articles":[]},{"title":"内存分配","level":"1.2.3.5","depth":3,"path":"golang/Interview_questions/malloc.md","ref":"golang/Interview_questions/malloc.md","articles":[]},{"title":"陷阱","level":"1.2.3.6","depth":3,"path":"golang/Interview_questions/trap.md","ref":"golang/Interview_questions/trap.md","articles":[]}]},"previous":{"title":"可扩展的 Go 调度程序设计文档[译]","level":"1.2.1","depth":2,"path":"golang/Scalable_Go_Scheduler_Design_Doc.md","ref":"golang/Scalable_Go_Scheduler_Design_Doc.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["expandable-chapters","livereload"],"pluginsConfig":{"expandable-chapters":{},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"golang/Go_Preemptive_Scheduler_Design_Doc.md","mtime":"2021-12-16T16:14:08.286Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-12-16T16:15:29.071Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-expandable-chapters/expandable-chapters.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

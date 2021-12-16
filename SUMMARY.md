@@ -1,8 +1,19 @@
 # Summary
 
 * [Introduction](README.md)
+* [golang 笔记](golang/README.md)
+  * [可扩展的 Go 调度程序设计文档[译]](golang/Scalable_Go_Scheduler_Design_Doc.md)
+  * [Go 抢占式调度程序设计文档](golang/Go_Preemptive_Scheduler_Design_Doc.md)
+  * [golang面试题整理](golang/Interview_questions/README.md)
+    * [复合数据类型](golang/Interview_questions/compound_data_type.md)
+    * [select](golang/Interview_questions/select.md)
+    * [垃圾收集](golang/Interview_questions/gc.md)
+    * [golang 调度](golang/Interview_questions/golang_scheduler.md)
+    * [内存分配](golang/Interview_questions/malloc.md)
+    * [陷阱](golang/Interview_questions/trap.md)
+  
 * [Go Module 中文文档](module/README.md)
-	* [概述](module/Introduction.md)
+  * [概述](module/Introduction.md)
 * [Go 内存模型](memory/README.md)
   * [概述](memory/Introduction.md)
   * [建议](memory/Advice.md)
@@ -20,12 +31,14 @@
 * [docker 命令官方文档](docker_docs/README.md)
   * [docker image](docker_docs/image/README.md)
     * [镜像列表](docker_docs/image/list_images.md)
+* [kubernetes](kubernetes/README.md)
+  * [apiVersion](kubernetes/apiVersion.md)
+  * [镜像拉取策略](kubernetes/image_pull_policy.md)
+
 * [alpine](alpine/README.md)
   * [alpine](alpine/alpine.md)
-
 * [sonar](sonar/README.md)
   * [sonarqube docker方式安装部署](sonar/sonarqube docker方式安装部署.md)
-
 * [其他](other/README.md)
   * [Gitbook安装使用教程](other/GitBook_Tutorials.md)
 
