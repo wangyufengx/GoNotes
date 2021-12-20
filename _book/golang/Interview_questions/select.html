@@ -717,7 +717,728 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h3 id="select">select</h3>
+                                <h1 id="select">select</h1>
+<ul>
+<li>Go&#x7684;select&#x8BED;&#x53E5;&#x662F;&#x4E00;&#x79CD;&#x4EC5;&#x80FD;&#x7528;&#x4E8E;channl&#x53D1;&#x9001;&#x548C;&#x63A5;&#x6536;&#x6D88;&#x606F;&#x7684;&#x4E13;&#x7528;&#x8BED;&#x53E5;&#xFF0C;&#x6B64;&#x8BED;&#x53E5;&#x8FD0;&#x884C;&#x671F;&#x95F4;&#x662F;&#x963B;&#x585E;&#x7684;&#xFF1B;&#x5F53;select&#x4E2D;&#x6CA1;&#x6709;case&#x8BED;&#x53E5;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4F1A;&#x963B;&#x585E;&#x5F53;&#x524D;groutine&#x3002;</li>
+<li>select&#x662F;Golang&#x5728;&#x8BED;&#x8A00;&#x5C42;&#x9762;&#x63D0;&#x4F9B;&#x7684;I/O&#x591A;&#x8DEF;&#x590D;&#x7528;&#x7684;&#x673A;&#x5236;&#xFF0C;&#x5176;&#x4E13;&#x95E8;&#x7528;&#x6765;&#x68C0;&#x6D4B;&#x591A;&#x4E2A;channel&#x662F;&#x5426;&#x51C6;&#x5907;&#x5B8C;&#x6BD5;&#xFF1A;&#x53EF;&#x8BFB;&#x6216;&#x53EF;&#x5199;&#x3002;</li>
+</ul>
+<h3 id="&#x7528;&#x6CD5;">&#x7528;&#x6CD5;</h3>
+<ul>
+<li><p>&#x6BCF;&#x4E2A; case &#x90FD;&#x5FC5;&#x987B;&#x662F;&#x4E00;&#x4E2A;&#x901A;&#x4FE1;</p>
+</li>
+<li><p>&#x6240;&#x6709; channel &#x8868;&#x8FBE;&#x5F0F;&#x90FD;&#x4F1A;&#x88AB;&#x6C42;&#x503C;</p>
+</li>
+<li><p>&#x6240;&#x6709;&#x88AB;&#x53D1;&#x9001;&#x7684;&#x8868;&#x8FBE;&#x5F0F;&#x90FD;&#x4F1A;&#x88AB;&#x6C42;&#x503C;</p>
+</li>
+<li><p>&#x5982;&#x679C;&#x4EFB;&#x610F;&#x67D0;&#x4E2A;&#x901A;&#x4FE1;&#x53EF;&#x4EE5;&#x8FDB;&#x884C;&#xFF0C;&#x5B83;&#x5C31;&#x6267;&#x884C;&#xFF0C;&#x5176;&#x4ED6;&#x88AB;&#x5FFD;&#x7565;&#x3002;</p>
+</li>
+<li><p>&#x5982;&#x679C;&#x6709;&#x591A;&#x4E2A; case &#x90FD;&#x53EF;&#x4EE5;&#x8FD0;&#x884C;&#xFF0C;Select &#x4F1A;&#x968F;&#x673A;&#x516C;&#x5E73;&#x5730;&#x9009;&#x51FA;&#x4E00;&#x4E2A;&#x6267;&#x884C;&#x3002;&#x5176;&#x4ED6;&#x4E0D;&#x4F1A;&#x6267;&#x884C;&#x3002;</p>
+<p>  &#x5426;&#x5219;&#xFF1A;</p>
+<ol>
+<li>&#x5982;&#x679C;&#x6709; default &#x5B50;&#x53E5;&#xFF0C;&#x5219;&#x6267;&#x884C;&#x8BE5;&#x8BED;&#x53E5;&#x3002;</li>
+<li>&#x5982;&#x679C;&#x6CA1;&#x6709; default &#x5B50;&#x53E5;&#xFF0C;select &#x5C06;&#x963B;&#x585E;&#xFF0C;&#x76F4;&#x5230;&#x67D0;&#x4E2A;&#x901A;&#x4FE1;&#x53EF;&#x4EE5;&#x8FD0;&#x884C;&#xFF1B;Go &#x4E0D;&#x4F1A;&#x91CD;&#x65B0;&#x5BF9; channel &#x6216;&#x503C;&#x8FDB;&#x884C;&#x6C42;&#x503C;&#x3002;</li>
+</ol>
+</li>
+<li><p><code>select{}</code>&#x6C38;&#x8FDC;&#x963B;&#x585E;&#x5F53;&#x524D; Goroutine&#x3002;</p>
+</li>
+</ul>
+<h3 id="&#x6E90;&#x7801;&#x5B66;&#x4E60;1171">&#x6E90;&#x7801;&#x5B66;&#x4E60;(1.17.1)</h3>
+<h4 id="&#x6570;&#x636E;&#x7ED3;&#x6784;">&#x6570;&#x636E;&#x7ED3;&#x6784;</h4>
+<ul>
+<li><p>select&#x4E2D;case</p>
+<pre><code class="lang-go">  <span class="hljs-keyword">type</span> scase <span class="hljs-keyword">struct</span> {
+      c    *hchan         <span class="hljs-comment">// channel</span>
+      elem unsafe.Pointer <span class="hljs-comment">// &#x53D1;&#x9001;&#x6216;&#x8005;&#x63A5;&#x53D7;&#x6570;&#x636E;&#x7684;&#x53D8;&#x91CF;&#x5730;&#x5740;</span>
+  }
+</code></pre>
+</li>
+<li><p>runtimeSelect &#x662F;&#x4F20;&#x9012;&#x7ED9; rselect &#x7684;&#x5355;&#x4E2A; case</p>
+<pre><code class="lang-go">  <span class="hljs-comment">// &#x5B83;&#x5FC5;&#x987B;&#x5339;&#x914D; ../reflect/value.go:/runtimeSelect</span>
+  <span class="hljs-keyword">type</span> runtimeSelect <span class="hljs-keyword">struct</span> {
+      dir selectDir        <span class="hljs-comment">//&#x901A;&#x4FE1;&#x65B9;&#x5411;</span>
+      typ unsafe.Pointer <span class="hljs-comment">// channel type (not used here)</span>
+      ch  *hchan         <span class="hljs-comment">// channel</span>
+      val unsafe.Pointer <span class="hljs-comment">// ptr to data (SendDir) or ptr to receive buffer (RecvDir)</span>
+  }
+</code></pre>
+</li>
+<li><p>select case &#x7684;&#x901A;&#x4FE1;&#x65B9;&#x5411;</p>
+<pre><code class="lang-go">  <span class="hljs-keyword">type</span> selectDir <span class="hljs-keyword">int</span>
+
+  <span class="hljs-keyword">const</span> (
+      _             selectDir = <span class="hljs-literal">iota</span>
+      selectSend              <span class="hljs-comment">// &#x53D1;&#x9001; case Chan &lt;- Send</span>
+      selectRecv              <span class="hljs-comment">// &#x63A5;&#x6536; case &lt;-Chan:</span>
+      selectDefault           <span class="hljs-comment">// &#x9ED8;&#x8BA4; default</span>
+  )
+</code></pre>
+</li>
+</ul>
+<h4 id="&#x8FD0;&#x884C;&#x65F6;">&#x8FD0;&#x884C;&#x65F6;</h4>
+<p>&#x6267;&#x884C;&#x4EE3;&#x7801;&#x6D41;&#x7A0B;&#xFF1A;</p>
+<ol>
+<li><code>go/src/reflect/value.go rselect</code> </li>
+<li><code>go/src/runtime/select.go reflect_rselect</code> </li>
+<li><code>go/src/runtime/select.go reflectgo</code></li>
+</ol>
+<h5 id="reflectrselect">reflect_rselect</h5>
+<pre><code class="lang-go"><span class="hljs-comment">//rselect &#x8FD0;&#x884C;&#x4E00;&#x4E2A;select&#x3002;</span>
+<span class="hljs-comment">//&#x5B83;&#x8FD4;&#x56DE;&#x6240;&#x9009;case&#x7684;&#x7D22;&#x5F15;&#x3002;</span>
+<span class="hljs-comment">//&#x5982;&#x679C; case &#x662F;&#x63A5;&#x6536;&#xFF0C;&#x5219; val &#x5C06;&#x586B;&#x5145;&#x63A5;&#x6536;&#x5230;&#x7684;&#x503C;&#x3002;</span>
+<span class="hljs-comment">//&#x4F20;&#x7EDF;&#x7684; OK bool &#x6307;&#x793A;&#x63A5;&#x6536;&#x662F;&#x5426;&#x5BF9;&#x5E94;&#x4E8E;&#x53D1;&#x9001;&#x7684;&#x503C;&#x3002;</span>
+<span class="hljs-comment">//go:noescape</span>
+<span class="hljs-keyword">func</span> rselect([]runtimeSelect) (chosen <span class="hljs-keyword">int</span>, recvOK <span class="hljs-keyword">bool</span>)
+
+<span class="hljs-comment">//go:linkname reflect_rselect reflect.rselect</span>
+<span class="hljs-keyword">func</span> reflect_rselect(cases []runtimeSelect) (<span class="hljs-keyword">int</span>, <span class="hljs-keyword">bool</span>) {
+    <span class="hljs-comment">//select&#x4E2D;case&#x6570;&#x91CF;&#x4E3A;0&#x65F6; block&#x4F1A;&#x8C03;&#x7528;gopark&#x4F7F;&#x5F53;&#x524D;goroutine&#x9677;&#x5165;&#x6C38;&#x4E45;&#x963B;&#x585E;&#x72B6;&#x6001;&#x3002;</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(cases) == <span class="hljs-number">0</span> {
+        block()
+    }
+    sel := <span class="hljs-built_in">make</span>([]scase, <span class="hljs-built_in">len</span>(cases))
+    orig := <span class="hljs-built_in">make</span>([]<span class="hljs-keyword">int</span>, <span class="hljs-built_in">len</span>(cases))
+    nsends, nrecvs := <span class="hljs-number">0</span>, <span class="hljs-number">0</span>
+    dflt := <span class="hljs-number">-1</span>
+    <span class="hljs-comment">// &#x904D;&#x5386; cases &#x6570;&#x7EC4;</span>
+    <span class="hljs-comment">// &#x82E5; case &#x4E3A; default&#xFF0C;&#x5C06;&#x5F53;&#x524D; case&#x7684;&#x7D22;&#x5F15;&#x8D4B;&#x503C;&#x7ED9; dflt,&#x8DF3;&#x51FA;&#x5F53;&#x524D;case,&#x6267;&#x884C;&#x4E0B;&#x4E00;&#x4E2A;case</span>
+    <span class="hljs-comment">// &#x82E5; case &#x7528;&#x4E8E;&#x53D1;&#x9001;&#x901A;&#x9053;&#xFF0C; &#x5C06;&#x5F53;&#x524D;case&#x7684;&#x4FE1;&#x606F;&#x653E;&#x5165;&#x4E0A;&#x9762;&#x5B9A;&#x4E49;&#x7684;sel scase&#x6570;&#x7EC4;&#x4E2D;&#xFF0C;orig &#x5B58;&#x653E; cases&#x7684;&#x7D22;&#x5F15;&#x4FE1;&#x606F;(&#x4ECE;&#x524D;&#x5F80;&#x540E;)</span>
+    <span class="hljs-comment">// &#x82E5; case &#x7528;&#x4E8E;&#x63A5;&#x6536;&#x901A;&#x9053;&#xFF0C; &#x5C06;&#x5F53;&#x524D;case&#x7684;&#x4FE1;&#x606F;&#x653E;&#x5165;&#x4E0A;&#x9762;&#x5B9A;&#x4E49;&#x7684;sel scase&#x6570;&#x7EC4;&#x4E2D;&#xFF0C;orig &#x5B58;&#x653E; cases&#x7684;&#x7D22;&#x5F15;&#x4FE1;&#x606F;(&#x4ECE;&#x540E;&#x5F80;&#x524D;)</span>
+    <span class="hljs-keyword">for</span> i, rc := <span class="hljs-keyword">range</span> cases {
+        <span class="hljs-keyword">var</span> j <span class="hljs-keyword">int</span>
+        <span class="hljs-keyword">switch</span> rc.dir {
+        <span class="hljs-keyword">case</span> selectDefault:
+            dflt = i
+            <span class="hljs-keyword">continue</span>
+        <span class="hljs-keyword">case</span> selectSend:
+            j = nsends
+            nsends++
+        <span class="hljs-keyword">case</span> selectRecv:
+            nrecvs++
+            j = <span class="hljs-built_in">len</span>(cases) - nrecvs
+        }
+
+        sel[j] = scase{c: rc.ch, elem: rc.val}
+        orig[j] = i
+    }
+
+    <span class="hljs-comment">// &#x53EA;&#x6709;&#x4E00;&#x4E2A;default&#x65F6;&#x8FD4;&#x56DE;default&#x7684;&#x7D22;&#x5F15;</span>
+    <span class="hljs-keyword">if</span> nsends+nrecvs == <span class="hljs-number">0</span> {
+        <span class="hljs-keyword">return</span> dflt, <span class="hljs-literal">false</span>
+    }
+
+    <span class="hljs-comment">// &#x538B;&#x7F29;sel&#x548C;orig&#x5207;&#x7247;&#xFF0C;&#x53BB;&#x9664;&#x591A;&#x4F59;&#x90E8;&#x5206;&#xFF08;&#x521D;&#x59CB;&#x5316;&#x65F6;&#x7684;&#x5207;&#x7247;&#x957F;&#x5EA6;&#x53EF;&#x80FD;&#x5305;&#x542B;&#x4E86;default&#x7684;&#x90E8;&#x5206;&#xFF0C;&#x4F46;&#x662F;default&#x7684;&#x6570;&#x636E;&#x4E0D;&#x4F1A;&#x88AB;&#x653E;&#x5230;sel&#x3001;orig&#x4E2D;&#xFF0C;       // &#x56E0;&#x6B64;&#x4E2D;&#x95F4;&#x90E8;&#x5206;&#x4F1A;&#x5B58;&#x5728;&#x4E00;&#x4E2A;&#x4E3A;&#x7A7A;&#x7684;case &#x548C; 0&#x7684;&#x7D22;&#x5F15;&#xFF09;</span>
+    <span class="hljs-keyword">if</span> nsends+nrecvs &lt; <span class="hljs-built_in">len</span>(cases) {
+        <span class="hljs-built_in">copy</span>(sel[nsends:], sel[<span class="hljs-built_in">len</span>(cases)-nrecvs:])
+        <span class="hljs-built_in">copy</span>(orig[nsends:], orig[<span class="hljs-built_in">len</span>(cases)-nrecvs:])
+    }
+
+    order := <span class="hljs-built_in">make</span>([]<span class="hljs-keyword">uint16</span>, <span class="hljs-number">2</span>*(nsends+nrecvs))
+    <span class="hljs-keyword">var</span> pc0 *<span class="hljs-keyword">uintptr</span>
+    <span class="hljs-comment">// &#x7ADE;&#x4E89;&#x68C0;&#x6D4B;</span>
+    <span class="hljs-keyword">if</span> raceenabled {
+        pcs := <span class="hljs-built_in">make</span>([]<span class="hljs-keyword">uintptr</span>, nsends+nrecvs)
+        <span class="hljs-keyword">for</span> i := <span class="hljs-keyword">range</span> pcs {
+            selectsetpc(&amp;pcs[i])
+        }
+        pc0 = &amp;pcs[<span class="hljs-number">0</span>]
+    }
+
+    chosen, recvOK := selectgo(&amp;sel[<span class="hljs-number">0</span>], &amp;order[<span class="hljs-number">0</span>], pc0, nsends, nrecvs, dflt == <span class="hljs-number">-1</span>)
+
+    <span class="hljs-comment">// Translate chosen back to caller&apos;s ordering.</span>
+    <span class="hljs-keyword">if</span> chosen &lt; <span class="hljs-number">0</span> {
+        chosen = dflt
+    } <span class="hljs-keyword">else</span> {
+        chosen = orig[chosen]
+    }
+    <span class="hljs-keyword">return</span> chosen, recvOK
+}
+
+<span class="hljs-comment">// go/src/runtime/select.go</span>
+<span class="hljs-keyword">func</span> block() {
+    gopark(<span class="hljs-literal">nil</span>, <span class="hljs-literal">nil</span>, waitReasonSelectNoCases, traceEvGoStop, <span class="hljs-number">1</span>) <span class="hljs-comment">// forever</span>
+}
+</code></pre>
+<h5 id="selectgo">selectgo</h5>
+<p>selectgo&#x51FD;&#x6570;&#x5185;&#x90E8;&#x903B;&#x8F91;&#xFF1A;</p>
+<ol>
+<li>&#x4F7F;&#x7528;fastrandn&#x7B97;&#x6CD5;&#x628A;scases&#x6570;&#x7EC4;&#x7684;&#x7D22;&#x5F15;&#x91CD;&#x65B0;&#x7F16;&#x6392;&#x987A;&#x5E8F;&#x3002;</li>
+<li>&#x6839;&#x636E;&#x65B0;&#x7684;&#x7D22;&#x5F15;&#x987A;&#x5E8F;&#x5BF9;hchan&#x8FDB;&#x884C;&#x5806;&#x6392;&#x5E8F;&#x6765;&#x83B7;&#x53D6;case&#x7684;&#x9501;&#x5B9A;&#x987A;&#x5E8F;&#x3002;&#xFF08;&#x4FDD;&#x8BC1; n log n &#x65F6;&#x95F4;&#x548C;&#x6052;&#x5B9A;&#x7684;&#x5806;&#x6808;&#x5360;&#x7528;&#x7A7A;&#x95F4;&#xFF09;</li>
+<li><p>&#x9501;&#x5B9A;&#x6240;&#x6709;channel&#x3002;</p>
+</li>
+<li><p>&#x904D;&#x5386;&#x6240;&#x6709;channel&#xFF0C;&#x5224;&#x65AD;&#x662F;&#x5426;&#x6709;&#x53EF;&#x8BFB;&#x6216;&#x8005;&#x53EF;&#x5199;&#x7684;&#xFF0C;&#x5982;&#x679C;&#x6709;&#xFF0C;&#x89E3;&#x9501;channel,&#x8FD4;&#x56DE;&#x5BF9;&#x5E94;&#x6570;&#x636E;&#x3002;</p>
+</li>
+<li>&#x5426;&#x5219;&#xFF0C;&#x5224;&#x65AD;&#x6709;&#x6CA1;&#x6709;default&#xFF0C;&#x5982;&#x679C;&#x6709;&#xFF0C;&#x89E3;&#x9501;channel&#xFF0C;&#x8FD4;&#x56DE;default&#x5BF9;&#x5E94;scase&#x3002;</li>
+<li>&#x5426;&#x5219;&#xFF0C;&#x628A;&#x5F53;&#x524D;groutian&#x6DFB;&#x52A0;&#x5230;&#x6240;&#x6709;channel&#x7684;&#x7B49;&#x5F85;&#x961F;&#x5217;&#x91CC;&#xFF0C;&#x89E3;&#x9501;&#x6240;&#x6709;channel&#xFF0C;&#x7B49;&#x5F85;&#x88AB;&#x5524;&#x9192;&#x3002;</li>
+<li>&#x88AB;&#x5524;&#x9192;&#x540E;&#xFF0C;&#x518D;&#x6B21;&#x9501;&#x5B9A;&#x6240;&#x6709;channel</li>
+<li>&#x904D;&#x5386;&#x6240;&#x6709;channel&#xFF0C;&#x628A;g&#x4ECE;channel&#x7B49;&#x5F85;&#x961F;&#x5217;&#x4E2D;&#x79FB;&#x9664;&#xFF0C;&#x5E76;&#x627E;&#x5230;&#x53EF;&#x64CD;&#x4F5C;&#x7684;channel</li>
+<li>&#x5982;&#x679C;&#x5BF9;&#x5E94;&#x7684;scase&#x4E0D;&#x4E3A;&#x7A7A;&#xFF0C;&#x76F4;&#x63A5;&#x8FD4;&#x56DE;&#x5BF9;&#x5E94;&#x7684;&#x503C;</li>
+<li>&#x5426;&#x5219;&#x5FAA;&#x73AF;&#x6B64;&#x8FC7;&#x7A0B;</li>
+</ol>
+<p><img src="../../images/selectgo.jpg" alt=""></p>
+<p>&#x6E90;&#x7801;&#x89E3;&#x6790;&#xFF1A;</p>
+<pre><code class="lang-go"><span class="hljs-comment">// selectgo &#x5B9E;&#x73B0;&#x4E86; select &#x8BED;&#x53E5;&#x3002;</span>
+<span class="hljs-comment">// cas0 &#x6307;&#x5411;&#x7C7B;&#x578B;&#x4E3A; [ncases]scase &#x7684;&#x6570;&#x7EC4;&#xFF0C;&#x800C; order0 &#x6307;&#x5411;&#x7C7B;&#x578B;&#x4E3A; [2*ncases]uint16 &#x7684;&#x6570;&#x7EC4;&#xFF0C;</span>
+<span class="hljs-comment">// &#x5176;&#x4E2D; ncases &#x5FC5;&#x987B; &lt;= 65536&#x3002;&#x4E24;&#x8005;&#x90FD;&#x9A7B;&#x7559;&#x5728; goroutine &#x7684;&#x5806;&#x6808;&#x4E2D;&#xFF08;&#x4E0D;&#x7BA1; selectgo &#x4E2D;&#x7684;&#x4EFB;&#x4F55;&#x8F6C;&#x4E49;&#xFF09;&#x3002;</span>
+<span class="hljs-comment">// &#x5BF9;&#x4E8E;&#x7ADE;&#x4E89;&#x68C0;&#x6D4B;&#x5668;&#x6784;&#x5EFA;&#xFF0C;pc0 &#x6307;&#x5411; [ncases]uintptr &#x7C7B;&#x578B;&#x7684;&#x6570;&#x7EC4;&#xFF08;&#x4E5F;&#x5728;&#x5806;&#x6808;&#x4E2D;&#xFF09;&#xFF1B; &#x5BF9;&#x4E8E;&#x5176;&#x4ED6;&#x7248;&#x672C;&#xFF0C;&#x5B83;&#x8BBE;&#x7F6E;&#x4E3A; nil&#x3002;</span>
+<span class="hljs-comment">// selectgo &#x8FD4;&#x56DE;&#x6240;&#x9009; scase &#x7684;&#x7D22;&#x5F15;&#xFF0C;&#x8BE5;&#x7D22;&#x5F15;&#x4E0E;&#x5176;&#x5404;&#x81EA;&#x7684; select{recv,send,default} &#x8C03;&#x7528;&#x7684;&#x5E8F;&#x53F7;&#x4F4D;&#x7F6E;&#x76F8;&#x5339;&#x914D;&#x3002;</span>
+<span class="hljs-comment">// &#x6B64;&#x5916;&#xFF0C;&#x5982;&#x679C;&#x9009;&#x62E9;&#x7684; scase &#x662F;&#x63A5;&#x6536;&#x64CD;&#x4F5C;&#xFF0C;&#x5B83;&#x4F1A;&#x62A5;&#x544A;&#x662F;&#x5426;&#x63A5;&#x6536;&#x5230;&#x503C;&#x3002;</span>
+<span class="hljs-keyword">func</span> selectgo(cas0 *scase, order0 *<span class="hljs-keyword">uint16</span>, pc0 *<span class="hljs-keyword">uintptr</span>, nsends, nrecvs <span class="hljs-keyword">int</span>, block <span class="hljs-keyword">bool</span>) (<span class="hljs-keyword">int</span>, <span class="hljs-keyword">bool</span>) {
+    <span class="hljs-keyword">if</span> debugSelect {
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;select: cas0=&quot;</span>, cas0, <span class="hljs-string">&quot;\n&quot;</span>)
+    }
+
+    <span class="hljs-comment">// &#x5C06;case&#x7684;&#x9996;&#x5730;&#x5740;&#x6307;&#x9488;&#x8F6C;&#x4E49;&#x4E3A;&#x5207;&#x7247;&#x6307;&#x9488;</span>
+    <span class="hljs-comment">// &#x6CE8;&#x610F;&#xFF1A;&#x4E3A;&#x4E86;&#x4FDD;&#x6301;&#x7CBE;&#x7B80;&#x7684;&#x5806;&#x6808;&#x5927;&#x5C0F;&#xFF0C;scases &#x7684;&#x6570;&#x91CF;&#x4E0A;&#x9650;&#x4E3A; 65536&#x3002;</span>
+    cas1 := (*[<span class="hljs-number">1</span> &lt;&lt; <span class="hljs-number">16</span>]scase)(unsafe.Pointer(cas0))
+    order1 := (*[<span class="hljs-number">1</span> &lt;&lt; <span class="hljs-number">17</span>]<span class="hljs-keyword">uint16</span>)(unsafe.Pointer(order0))
+
+    ncases := nsends + nrecvs
+    scases := cas1[:ncases:ncases]
+    pollorder := order1[:ncases:ncases]
+    lockorder := order1[ncases:][:ncases:ncases]
+
+    <span class="hljs-comment">// &#x6CE8;&#x610F;&#xFF1A;&#x7F16;&#x8BD1;&#x5668;&#x6CA1;&#x6709;&#x5BF9; pollorder/lockorder &#x7684;&#x5E95;&#x5C42;&#x6570;&#x7EC4;&#x8FDB;&#x884C;&#x96F6;&#x521D;&#x59CB;&#x5316;&#x3002;</span>
+    <span class="hljs-comment">// &#x5373;&#x4F7F;raceenabled &#x4E3A;true&#xFF0C;&#x5728;&#x6CA1;&#x6709;-race &#x7684;&#x60C5;&#x51B5;&#x4E0B;&#x7F16;&#x8BD1;&#x7684;&#x5305;&#x4E2D;&#x4E5F;&#x53EF;&#x80FD;&#x6709;select &#x8BED;&#x53E5;</span>
+    <span class="hljs-comment">//&#xFF08;&#x4F8B;&#x5982;runtime/signal_unix.go &#x4E2D;&#x7684;ensureSigM&#xFF09;&#x3002;</span>
+    <span class="hljs-keyword">var</span> pcs []<span class="hljs-keyword">uintptr</span>
+    <span class="hljs-keyword">if</span> raceenabled &amp;&amp; pc0 != <span class="hljs-literal">nil</span> {
+        pc1 := (*[<span class="hljs-number">1</span> &lt;&lt; <span class="hljs-number">16</span>]<span class="hljs-keyword">uintptr</span>)(unsafe.Pointer(pc0))
+        pcs = pc1[:ncases:ncases]
+    }
+    casePC := <span class="hljs-keyword">func</span>(casi <span class="hljs-keyword">int</span>) <span class="hljs-keyword">uintptr</span> {
+        <span class="hljs-keyword">if</span> pcs == <span class="hljs-literal">nil</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>
+        }
+        <span class="hljs-keyword">return</span> pcs[casi]
+    }
+
+    <span class="hljs-keyword">var</span> t0 <span class="hljs-keyword">int64</span>
+    <span class="hljs-keyword">if</span> blockprofilerate &gt; <span class="hljs-number">0</span> {
+        t0 = cputicks()
+    }
+
+
+    <span class="hljs-comment">// &#x751F;&#x6210;&#x6392;&#x5217;&#x987A;&#x5E8F;</span>
+    <span class="hljs-comment">// &#x4F7F;&#x7528;fastrandn&#x968F;&#x673A;&#x7B97;&#x6CD5;&#xFF0C;&#x8BBE;&#x7F6E;pollorder&#x6570;&#x7EC4;&#xFF0C;&#x540E;&#x9762;&#x4F1A;&#x6839;&#x636E;&#x8FD9;&#x4E2A;&#x6570;&#x7EC4;&#x8FDB;&#x884C;&#x5FAA;&#x73AF;&#xFF0C;&#x4EE5;&#x8FBE;&#x5230;&#x968F;&#x673A;case</span>
+    norder := <span class="hljs-number">0</span>
+    <span class="hljs-keyword">for</span> i := <span class="hljs-keyword">range</span> scases {
+        cas := &amp;scases[i]
+
+        <span class="hljs-comment">// &#x4ECE;&#x8F6E;&#x8BE2;&#x548C;&#x9501;&#x5B9A;&#x8BA2;&#x5355;&#x4E2D;&#x5FFD;&#x7565;&#x6CA1;&#x6709;channel&#x7684;&#x60C5;&#x51B5;&#x3002;</span>
+        <span class="hljs-keyword">if</span> cas.c == <span class="hljs-literal">nil</span> {
+            cas.elem = <span class="hljs-literal">nil</span> <span class="hljs-comment">// allow GC</span>
+            <span class="hljs-keyword">continue</span>
+        }
+
+        j := fastrandn(<span class="hljs-keyword">uint32</span>(norder + <span class="hljs-number">1</span>))
+        pollorder[norder] = pollorder[j]
+        pollorder[j] = <span class="hljs-keyword">uint16</span>(i)
+        norder++
+    }
+    pollorder = pollorder[:norder]
+    lockorder = lockorder[:norder]
+
+    <span class="hljs-comment">// &#x6309; Hchan &#x5730;&#x5740;&#x5BF9; case &#x8FDB;&#x884C;&#x6392;&#x5E8F;&#x4EE5;&#x83B7;&#x53D6;&#x9501;&#x5B9A;&#x987A;&#x5E8F;&#x3002;</span>
+    <span class="hljs-comment">// &#x7B80;&#x5355;&#x7684;&#x5806;&#x6392;&#x5E8F;&#xFF0C;&#x4EE5;&#x4FDD;&#x8BC1; n log n &#x65F6;&#x95F4;&#x548C;&#x6052;&#x5B9A;&#x7684;&#x5806;&#x6808;&#x5360;&#x7528;&#x7A7A;&#x95F4;&#x3002;</span>
+    <span class="hljs-comment">// &#x9632;&#x6B62;&#x4E0D;&#x540C;&#x987A;&#x5E8F;&#x7684;case&#x8FDB;&#x6765;&#x65F6;&#x9501;&#x5B9A;channel&#x5BFC;&#x81F4;&#x6B7B;&#x9501;&#x3002;</span>
+    <span class="hljs-keyword">for</span> i := <span class="hljs-keyword">range</span> lockorder {
+        j := i
+        <span class="hljs-comment">// Start with the pollorder to permute cases on the same channel.</span>
+        c := scases[pollorder[i]].c
+        <span class="hljs-keyword">for</span> j &gt; <span class="hljs-number">0</span> &amp;&amp; scases[lockorder[(j<span class="hljs-number">-1</span>)/<span class="hljs-number">2</span>]].c.sortkey() &lt; c.sortkey() {
+            k := (j - <span class="hljs-number">1</span>) / <span class="hljs-number">2</span>
+            lockorder[j] = lockorder[k]
+            j = k
+        }
+        lockorder[j] = pollorder[i]
+    }
+    <span class="hljs-keyword">for</span> i := <span class="hljs-built_in">len</span>(lockorder) - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; i-- {
+        o := lockorder[i]
+        c := scases[o].c
+        lockorder[i] = lockorder[<span class="hljs-number">0</span>]
+        j := <span class="hljs-number">0</span>
+        <span class="hljs-keyword">for</span> {
+            k := j*<span class="hljs-number">2</span> + <span class="hljs-number">1</span>
+            <span class="hljs-keyword">if</span> k &gt;= i {
+                <span class="hljs-keyword">break</span>
+            }
+            <span class="hljs-keyword">if</span> k+<span class="hljs-number">1</span> &lt; i &amp;&amp; scases[lockorder[k]].c.sortkey() &lt; scases[lockorder[k+<span class="hljs-number">1</span>]].c.sortkey() {
+                k++
+            }
+            <span class="hljs-keyword">if</span> c.sortkey() &lt; scases[lockorder[k]].c.sortkey() {
+                lockorder[j] = lockorder[k]
+                j = k
+                <span class="hljs-keyword">continue</span>
+            }
+            <span class="hljs-keyword">break</span>
+        }
+        lockorder[j] = o
+    }
+
+    <span class="hljs-keyword">if</span> debugSelect {
+        <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i+<span class="hljs-number">1</span> &lt; <span class="hljs-built_in">len</span>(lockorder); i++ {
+            <span class="hljs-keyword">if</span> scases[lockorder[i]].c.sortkey() &gt; scases[lockorder[i+<span class="hljs-number">1</span>]].c.sortkey() {
+                <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;i=&quot;</span>, i, <span class="hljs-string">&quot; x=&quot;</span>, lockorder[i], <span class="hljs-string">&quot; y=&quot;</span>, lockorder[i+<span class="hljs-number">1</span>], <span class="hljs-string">&quot;\n&quot;</span>)
+                throw(<span class="hljs-string">&quot;select: broken sort&quot;</span>)
+            }
+        }
+    }
+
+    <span class="hljs-comment">// &#x9501;&#x5B9A; select &#x4E2D;&#x6D89;&#x53CA;&#x7684;&#x6240;&#x6709; channel</span>
+    sellock(scases, lockorder)
+
+    <span class="hljs-keyword">var</span> (
+        gp     *g
+        sg     *sudog
+        c      *hchan
+        k      *scase
+        sglist *sudog
+        sgnext *sudog
+        qp     unsafe.Pointer
+        nextp  **sudog
+    )
+
+    <span class="hljs-comment">// pass 1 - &#x5BFB;&#x627E;&#x5DF2;&#x7ECF;&#x5728;&#x7B49;&#x5F85;&#x7684;&#x4E1C;&#x897F;</span>
+    <span class="hljs-keyword">var</span> casi <span class="hljs-keyword">int</span>
+    <span class="hljs-keyword">var</span> cas *scase
+    <span class="hljs-keyword">var</span> caseSuccess <span class="hljs-keyword">bool</span>
+    <span class="hljs-keyword">var</span> caseReleaseTime <span class="hljs-keyword">int64</span> = <span class="hljs-number">-1</span>
+    <span class="hljs-keyword">var</span> recvOK <span class="hljs-keyword">bool</span>
+
+    <span class="hljs-comment">//&#x6839;&#x636E;&#x7D22;&#x5F15;&#x904D;&#x5386;scases&#x6570;&#x7EC4;&#x4E2D;&#x7684;&#x5143;&#x7D20; </span>
+    <span class="hljs-keyword">for</span> _, casei := <span class="hljs-keyword">range</span> pollorder {
+        casi = <span class="hljs-keyword">int</span>(casei)
+        cas = &amp;scases[casi]
+        c = cas.c
+
+        <span class="hljs-comment">//&#x63A5;&#x6536;scase&#x7684;&#x7D22;&#x5F15;</span>
+        <span class="hljs-keyword">if</span> casi &gt;= nsends {
+             <span class="hljs-comment">//&#x4ECE;channel&#x7684;&#x53D1;&#x9001;&#x961F;&#x5217;&#x4E2D;&#x83B7;&#x53D6;sudog&#xFF0C;&#x5982;&#x679C;&#x6709;&#xFF0C;&#x8DF3;&#x5230;recv&#x4EE3;&#x7801;&#x5757;</span>
+            sg = c.sendq.dequeue()
+            <span class="hljs-keyword">if</span> sg != <span class="hljs-literal">nil</span> {
+                <span class="hljs-keyword">goto</span> recv
+            }
+            <span class="hljs-comment">//&#x5224;&#x65AD;channel&#x662F;&#x5426;&#x4E3A;&#x5E26;&#x7F13;&#x51B2;&#x7684;&#xFF0C;&#x5E76;&#x4E14;&#x7F13;&#x51B2;&#x533A;&#x6709;&#x503C;&#xFF0C;&#x8DF3;&#x5230;bufrecv&#x4EE3;&#x7801;&#x5757;</span>
+            <span class="hljs-keyword">if</span> c.qcount &gt; <span class="hljs-number">0</span> {
+                <span class="hljs-keyword">goto</span> bufrecv
+            }
+             <span class="hljs-comment">//&#x5982;&#x679C;channel&#x5DF2;&#x7ECF;&#x5173;&#x95ED;&#xFF0C;&#x8DF3;&#x5230;rclose&#x4EE3;&#x7801;&#x5757;</span>
+            <span class="hljs-keyword">if</span> c.closed != <span class="hljs-number">0</span> {
+                <span class="hljs-keyword">goto</span> rclose
+            }
+        } <span class="hljs-keyword">else</span> {    <span class="hljs-comment">//&#x53D1;&#x9001;scase&#x7684;&#x7D22;&#x5F15;</span>
+            <span class="hljs-comment">//&#x5F00;&#x542F;&#x7ADE;&#x4E89;&#x65F6;</span>
+            <span class="hljs-keyword">if</span> raceenabled {
+                racereadpc(c.raceaddr(), casePC(casi), chansendpc)
+            }
+            <span class="hljs-comment">//&#x5982;&#x679C;channel&#x5DF2;&#x7ECF;&#x5173;&#x95ED;&#xFF0C;&#x8DF3;&#x5230;sclose&#x4EE3;&#x7801;&#x5757;</span>
+            <span class="hljs-keyword">if</span> c.closed != <span class="hljs-number">0</span> {
+                <span class="hljs-keyword">goto</span> sclose
+            }
+            <span class="hljs-comment">//&#x5982;&#x679C;channel&#x7684;&#x8BFB;&#x53D6;&#x961F;&#x5217;&#x91CC;&#x5B58;&#x5728;groutian,&#x8DF3;&#x5230;send&#x4EE3;&#x7801;&#x5757;</span>
+            sg = c.recvq.dequeue()
+            <span class="hljs-keyword">if</span> sg != <span class="hljs-literal">nil</span> {
+                <span class="hljs-keyword">goto</span> send
+            }
+             <span class="hljs-comment">//&#x5982;&#x679C;channel&#x4E3A;&#x7F13;&#x51B2;&#x578B;&#xFF0C;&#x5E76;&#x4E14;&#x6570;&#x636E;&#x6CA1;&#x6EE1;&#xFF0C;&#x8DF3;&#x8F6C;&#x5230;bufsend&#x4EE3;&#x7801;&#x5757;</span>
+            <span class="hljs-keyword">if</span> c.qcount &lt; c.dataqsiz {
+                <span class="hljs-keyword">goto</span> bufsend
+            }
+        }
+    }
+
+    <span class="hljs-comment">// &#x4EE3;&#x7801;&#x80FD;&#x8D70;&#x5230;&#x8FD9;&#x91CC;&#xFF0C;&#x8BF4;&#x660E;&#x6240;&#x6709;&#x7684;channel&#x90FD;&#x4E0D;&#x5177;&#x5907;&#x8BFB;&#x53D6;&#x7684;&#x65F6;&#x673A;&#xFF0C;&#x5224;&#x65AD;&#x662F;&#x5426;&#x6709;default</span>
+    <span class="hljs-comment">// &#x5982;&#x679C; select &#x4E2D;&#x6709; default &#x65F6;&#xFF0C;&#x89E3;&#x9501;&#x6240;&#x6709;channel&#xFF0C;&#x8DF3;&#x8F6C;&#x5230; retc &#x4EE3;&#x7801;&#x5757;</span>
+    <span class="hljs-keyword">if</span> !block {
+        selunlock(scases, lockorder)
+        casi = <span class="hljs-number">-1</span>
+        <span class="hljs-keyword">goto</span> retc
+    }
+
+    <span class="hljs-comment">// pass 2 - &#x6240;&#x6709; chan &#x5165;&#x961F;&#x5217;</span>
+    gp = getg()
+    <span class="hljs-keyword">if</span> gp.waiting != <span class="hljs-literal">nil</span> {
+        throw(<span class="hljs-string">&quot;gp.waiting != nil&quot;</span>)
+    }
+
+    <span class="hljs-comment">// &#x5FAA;&#x73AF;scases&#xFF0C;&#x628A;groutian&#x5B58;&#x50A8;&#x5230;channel&#x5BF9;&#x5E94;&#x7684;&#x8BFB;&#x5199;&#x961F;&#x5217;&#x4E2D;</span>
+    <span class="hljs-comment">// &#x8BBE;&#x7F6E;gp.waiting&#x4E3A;sudog&#x961F;&#x5217;</span>
+    nextp = &amp;gp.waiting
+    <span class="hljs-keyword">for</span> _, casei := <span class="hljs-keyword">range</span> lockorder {
+        casi = <span class="hljs-keyword">int</span>(casei)
+        cas = &amp;scases[casi]
+        c = cas.c
+        <span class="hljs-comment">//&#x6784;&#x5EFA;sudog</span>
+        sg := acquireSudog()
+        sg.g = gp
+        sg.isSelect = <span class="hljs-literal">true</span>
+        <span class="hljs-comment">// No stack splits between assigning elem and enqueuing</span>
+        <span class="hljs-comment">// sg on gp.waiting where copystack can find it.</span>
+        sg.elem = cas.elem
+        sg.releasetime = <span class="hljs-number">0</span>
+        <span class="hljs-keyword">if</span> t0 != <span class="hljs-number">0</span> {
+            sg.releasetime = <span class="hljs-number">-1</span>
+        }
+        sg.c = c
+        <span class="hljs-comment">// &#x6309;&#x9501;&#x987A;&#x5E8F;&#x6784;&#x9020;&#x7B49;&#x5F85;&#x5217;&#x8868;&#x3002;</span>
+        *nextp = sg
+        nextp = &amp;sg.waitlink
+        <span class="hljs-comment">// &#x53D1;&#x9001;scase&#x7684;&#x7D22;&#x5F15;</span>
+        <span class="hljs-keyword">if</span> casi &lt; nsends {
+            c.sendq.enqueue(sg)
+        } <span class="hljs-keyword">else</span> {    <span class="hljs-comment">// &#x63A5;&#x6536;scase&#x7684;&#x7D22;&#x5F15;</span>
+            c.recvq.enqueue(sg)
+        }
+    }
+
+    <span class="hljs-comment">// &#x7B49;&#x5F85;&#x88AB;&#x5524;&#x9192;</span>
+    gp.param = <span class="hljs-literal">nil</span>
+    <span class="hljs-comment">// &#x5411;&#x4EFB;&#x4F55;&#x8BD5;&#x56FE;&#x7F29;&#x5C0F;&#x6211;&#x4EEC;&#x7684;&#x7B79;&#x7801;&#x91CF;&#x7684;&#x4EBA;&#x53D1;&#x51FA;&#x4FE1;&#x53F7;&#xFF0C;&#x544A;&#x77E5;&#x6211;&#x4EEC;&#x5373;&#x5C06;&#x505C;&#x5728;&#x4E00;&#x4E2A;&#x901A;&#x9053;&#x4E0A;&#x3002;</span>
+    <span class="hljs-comment">// &#x8FD9;&#x4E2A; G &#x7684;&#x72B6;&#x6001;&#x6539;&#x53D8;&#x548C;&#x6211;&#x4EEC;&#x8BBE;&#x7F6E; gp.activeStackChans &#x4E4B;&#x95F4;&#x7684;&#x7A97;&#x53E3;&#x5BF9;&#x4E8E;&#x5806;&#x6808;&#x6536;&#x7F29;&#x662F;&#x4E0D;&#x5B89;&#x5168;&#x7684;&#x3002;</span>
+    <span class="hljs-comment">// //&#x6302;&#x8D77;goroutian&#xFF0C;selparkcommit&#x4F1A;&#x7ED9;&#x6240;&#x6709;channel&#x89E3;&#x9501;</span>
+    atomic.Store8(&amp;gp.parkingOnChan, <span class="hljs-number">1</span>)
+    gopark(selparkcommit, <span class="hljs-literal">nil</span>, waitReasonSelect, traceEvGoBlockSelect, <span class="hljs-number">1</span>)
+    gp.activeStackChans = <span class="hljs-literal">false</span>
+
+    <span class="hljs-comment">//&#x5524;&#x9192;&#x540E;&#x5148;&#x7ED9;channel&#x52A0;&#x9501;</span>
+    sellock(scases, lockorder)
+
+    gp.selectDone = <span class="hljs-number">0</span>
+    sg = (*sudog)(gp.param)
+    gp.param = <span class="hljs-literal">nil</span>
+
+    <span class="hljs-comment">// pass 3 - &#x4ECE;&#x4E0D;&#x6210;&#x529F;&#x7684; chan &#x4E2D;&#x51FA;&#x961F;&#xFF0C;&#x5426;&#x5219;&#x5B83;&#x4EEC;&#x4F1A;&#x5806;&#x79EF;&#x5728;&#x5B89;&#x9759;&#x7684;&#x901A;&#x9053;&#x4E0A;&#xFF0C;&#x8BB0;&#x5F55;&#x6210;&#x529F;&#x7684;&#x6848;&#x4F8B;&#xFF08;&#x5982;&#x679C;&#x6709;&#xFF09;&#x3002;</span>
+    <span class="hljs-comment">// &#x6211;&#x4EEC;&#x6309;&#x9501;&#x5B9A;&#x987A;&#x5E8F;&#x5355;&#x72EC;&#x8FDE;&#x63A5;&#x4E86; SudoG&#x3002;</span>
+    casi = <span class="hljs-number">-1</span>
+    cas = <span class="hljs-literal">nil</span>
+    caseSuccess = <span class="hljs-literal">false</span>
+    <span class="hljs-comment">// sglist&#x4E3A;&#x6240;&#x6709;sudog&#x94FE;&#x8868;</span>
+    sglist = gp.waiting
+    <span class="hljs-comment">// &#x5728;&#x4ECE; gp.waiting &#x53D6;&#x6D88;&#x94FE;&#x63A5;&#x4E4B;&#x524D;&#x6E05;&#x9664;&#x6240;&#x6709; elem&#x3002;</span>
+    <span class="hljs-keyword">for</span> sg1 := gp.waiting; sg1 != <span class="hljs-literal">nil</span>; sg1 = sg1.waitlink {
+        sg1.isSelect = <span class="hljs-literal">false</span>
+        sg1.elem = <span class="hljs-literal">nil</span>
+        sg1.c = <span class="hljs-literal">nil</span>
+    }
+    gp.waiting = <span class="hljs-literal">nil</span>
+
+    <span class="hljs-comment">// &#x5FAA;&#x73AF;&#x6240;&#x6709;case</span>
+    <span class="hljs-keyword">for</span> _, casei := <span class="hljs-keyword">range</span> lockorder {
+        k = &amp;scases[casei]
+        <span class="hljs-keyword">if</span> sg == sglist {
+            <span class="hljs-comment">// sg &#x5DF2;&#x7ECF;&#x88AB;&#x5524;&#x9192;&#x6211;&#x4EEC;&#x7684; G &#x51FA;&#x5217;&#x4E86;&#x3002;</span>
+            casi = <span class="hljs-keyword">int</span>(casei)
+            cas = k
+            caseSuccess = sglist.success
+            <span class="hljs-keyword">if</span> sglist.releasetime &gt; <span class="hljs-number">0</span> {
+                caseReleaseTime = sglist.releasetime
+            }
+        } <span class="hljs-keyword">else</span> {
+            c = k.c
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">int</span>(casei) &lt; nsends {
+                c.sendq.dequeueSudoG(sglist)
+            } <span class="hljs-keyword">else</span> {
+                c.recvq.dequeueSudoG(sglist)
+            }
+        }
+        sgnext = sglist.waitlink
+        sglist.waitlink = <span class="hljs-literal">nil</span>
+        releaseSudog(sglist)
+        sglist = sgnext
+    }
+
+    <span class="hljs-keyword">if</span> cas == <span class="hljs-literal">nil</span> {
+        throw(<span class="hljs-string">&quot;selectgo: bad wakeup&quot;</span>)
+    }
+
+    c = cas.c
+
+    <span class="hljs-keyword">if</span> debugSelect {
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;wait-return: cas0=&quot;</span>, cas0, <span class="hljs-string">&quot; c=&quot;</span>, c, <span class="hljs-string">&quot; cas=&quot;</span>, cas, <span class="hljs-string">&quot; send=&quot;</span>, casi &lt; nsends, <span class="hljs-string">&quot;\n&quot;</span>)
+    }
+
+    <span class="hljs-keyword">if</span> casi &lt; nsends {
+        <span class="hljs-keyword">if</span> !caseSuccess {
+            <span class="hljs-keyword">goto</span> sclose
+        }
+    } <span class="hljs-keyword">else</span> {
+        recvOK = caseSuccess
+    }
+
+    <span class="hljs-keyword">if</span> raceenabled {
+        <span class="hljs-keyword">if</span> casi &lt; nsends {
+            raceReadObjectPC(c.elemtype, cas.elem, casePC(casi), chansendpc)
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> cas.elem != <span class="hljs-literal">nil</span> {
+            raceWriteObjectPC(c.elemtype, cas.elem, casePC(casi), chanrecvpc)
+        }
+    }
+    <span class="hljs-keyword">if</span> msanenabled {
+        <span class="hljs-keyword">if</span> casi &lt; nsends {
+            msanread(cas.elem, c.elemtype.size)
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> cas.elem != <span class="hljs-literal">nil</span> {
+            msanwrite(cas.elem, c.elemtype.size)
+        }
+    }
+
+    <span class="hljs-comment">// &#x7EE7;&#x7EED;&#x9501;&#x5B9A;channel</span>
+    selunlock(scases, lockorder)
+    <span class="hljs-comment">//&#x8DF3;&#x8F6C;&#x5230;retc&#x4EE3;&#x7801;&#x5757;</span>
+    <span class="hljs-keyword">goto</span> retc
+<span class="hljs-comment">// channel&#x7684;&#x7F13;&#x51B2;&#x533A;&#x6709;&#x6570;&#x636E;&#x65F6;&#xFF0C;&#x76F4;&#x63A5;&#x4ECE;&#x7F13;&#x51B2;&#x533A;&#x83B7;&#x53D6;&#x6570;&#x636E;</span>
+bufrecv:
+    <span class="hljs-keyword">if</span> raceenabled {
+        <span class="hljs-keyword">if</span> cas.elem != <span class="hljs-literal">nil</span> {
+            raceWriteObjectPC(c.elemtype, cas.elem, casePC(casi), chanrecvpc)
+        }
+        racenotify(c, c.recvx, <span class="hljs-literal">nil</span>)
+    }
+    <span class="hljs-keyword">if</span> msanenabled &amp;&amp; cas.elem != <span class="hljs-literal">nil</span> {
+        msanwrite(cas.elem, c.elemtype.size)
+    }
+    recvOK = <span class="hljs-literal">true</span>
+    qp = chanbuf(c, c.recvx)
+    <span class="hljs-comment">//&#x5982;&#x679C;&#x6709;&#x63A5;&#x6536;&#x503C;&#xFF0C;&#x628A;&#x6570;&#x636E;&#x5730;&#x5740;&#x5B58;&#x5165;elem&#x4E2D;</span>
+    <span class="hljs-keyword">if</span> cas.elem != <span class="hljs-literal">nil</span> {
+        typedmemmove(c.elemtype, cas.elem, qp)
+    }
+    typedmemclr(c.elemtype, qp)
+    <span class="hljs-comment">//&#x63A5;&#x6536;&#x7D22;&#x5F15;&#x5F80;&#x540E;&#x632A;&#x4E00;&#x4F4D;&#x6216;&#x8005;&#x521D;&#x59CB;&#x5316;&#x4E3A;0</span>
+    c.recvx++
+    <span class="hljs-keyword">if</span> c.recvx == c.dataqsiz {
+        c.recvx = <span class="hljs-number">0</span>
+    }
+    <span class="hljs-comment">//&#x7F13;&#x51B2;&#x533A;&#x7684;&#x6570;&#x636E;&#x91CF;&#x51CF;&#x5C11;&#x4E00;&#x4E2A;</span>
+    c.qcount--
+    <span class="hljs-comment">//&#x89E3;&#x9501;&#x6240;&#x6709;channel</span>
+    selunlock(scases, lockorder)
+    <span class="hljs-comment">//&#x8DF3;&#x8F6C;&#x5230;retc&#x4EE3;&#x7801;&#x5757;</span>
+    <span class="hljs-keyword">goto</span> retc
+
+<span class="hljs-comment">//channel&#x7684;&#x7F13;&#x51B2;&#x533A;&#x6709;&#x7A7A;&#x95F2;&#x4F4D;&#x7F6E;&#x65F6;&#xFF0C;&#x628A;&#x6570;&#x636E;&#x76F4;&#x63A5;&#x5199;&#x5165;buffer&#x4E2D;</span>
+bufsend:
+    <span class="hljs-keyword">if</span> raceenabled {
+        racenotify(c, c.sendx, <span class="hljs-literal">nil</span>)
+        raceReadObjectPC(c.elemtype, cas.elem, casePC(casi), chansendpc)
+    }
+    <span class="hljs-keyword">if</span> msanenabled {
+        msanread(cas.elem, c.elemtype.size)
+    }
+    <span class="hljs-comment">//&#x8BBE;&#x7F6E;&#x6570;&#x636E;&#x5230;&#x7F13;&#x51B2;&#x533A;</span>
+    typedmemmove(c.elemtype, chanbuf(c, c.sendx), cas.elem)
+
+    <span class="hljs-comment">//&#x53D1;&#x9001;&#x4E0B;&#x6807;&#x5411;&#x540E;&#x632A;&#x52A8;&#x6216;&#x8005;&#x521D;&#x59CB;&#x5316;&#x4E3A;0</span>
+    c.sendx++
+    <span class="hljs-keyword">if</span> c.sendx == c.dataqsiz {
+        c.sendx = <span class="hljs-number">0</span>
+    }
+    <span class="hljs-comment">//&#x7F13;&#x51B2;&#x533A;&#x4E2D;&#x6570;&#x636E;&#x91CF;&#x52A0;1</span>
+    c.qcount++
+    <span class="hljs-comment">//&#x89E3;&#x9501;channel</span>
+    selunlock(scases, lockorder)
+    <span class="hljs-comment">//&#x8DF3;&#x8F6C;&#x5230;retc&#x4EE3;&#x7801;&#x533A;</span>
+    <span class="hljs-keyword">goto</span> retc
+
+recv:
+    <span class="hljs-comment">// &#x4ECE;&#x53D1;&#x9001;&#x7684;sudog&#x4E2D;&#x83B7;&#x53D6;&#x6570;&#x636E;</span>
+    <span class="hljs-comment">// &#x89E3;&#x9501;channel</span>
+    <span class="hljs-comment">// &#x5524;&#x9192;goroutian</span>
+    recv(c, sg, cas.elem, <span class="hljs-keyword">func</span>() { selunlock(scases, lockorder) }, <span class="hljs-number">2</span>)
+    <span class="hljs-keyword">if</span> debugSelect {
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;syncrecv: cas0=&quot;</span>, cas0, <span class="hljs-string">&quot; c=&quot;</span>, c, <span class="hljs-string">&quot;\n&quot;</span>)
+    }
+    recvOK = <span class="hljs-literal">true</span>
+    <span class="hljs-keyword">goto</span> retc
+
+<span class="hljs-comment">//&#x63A5;&#x6536;&#x65F6;channel&#x5DF2;&#x5173;&#x95ED;</span>
+rclose:
+    <span class="hljs-comment">// read at end of closed channel</span>
+    <span class="hljs-comment">// &#x89E3;&#x9501;channel</span>
+    selunlock(scases, lockorder)
+    recvOK = <span class="hljs-literal">false</span>
+    <span class="hljs-comment">// &#x5982;&#x679C;&#x6709;&#x6709;&#x63A5;&#x6536;&#x503C;&#xFF0C; eg&#xFF1A; case a := &lt;- chan0,&#x628A;&#x6570;&#x636E;&#x5730;&#x5740;&#x8D4B;&#x503C;&#x7ED9;elem</span>
+    <span class="hljs-keyword">if</span> cas.elem != <span class="hljs-literal">nil</span> {
+        typedmemclr(c.elemtype, cas.elem)
+    }
+    <span class="hljs-keyword">if</span> raceenabled {
+        raceacquire(c.raceaddr())
+    }
+    <span class="hljs-keyword">goto</span> retc
+
+<span class="hljs-comment">//&#x53D1;&#x9001;&#x65F6;channel&#x4E2D;&#x5B58;&#x5728;&#x63A5;&#x6536;goroutian</span>
+send:
+    <span class="hljs-comment">// can send to a sleeping receiver (sg)</span>
+    <span class="hljs-keyword">if</span> raceenabled {
+        raceReadObjectPC(c.elemtype, cas.elem, casePC(casi), chansendpc)
+    }
+    <span class="hljs-keyword">if</span> msanenabled {
+        msanread(cas.elem, c.elemtype.size)
+    }
+    <span class="hljs-comment">//&#x628A;&#x6570;&#x636E;&#x53D1;&#x9001;&#x5230;&#x63A5;&#x6536;&#x7684;goroutian&#x4E2D;</span>
+    <span class="hljs-comment">//&#x89E3;&#x9501;channel</span>
+    <span class="hljs-comment">//&#x5524;&#x9192;goroutian</span>
+    send(c, sg, cas.elem, <span class="hljs-keyword">func</span>() { selunlock(scases, lockorder) }, <span class="hljs-number">2</span>)
+    <span class="hljs-keyword">if</span> debugSelect {
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;syncsend: cas0=&quot;</span>, cas0, <span class="hljs-string">&quot; c=&quot;</span>, c, <span class="hljs-string">&quot;\n&quot;</span>)
+    }
+    <span class="hljs-keyword">goto</span> retc
+
+<span class="hljs-comment">//&#x8FD4;&#x56DE;</span>
+retc:
+    <span class="hljs-keyword">if</span> caseReleaseTime &gt; <span class="hljs-number">0</span> {
+        blockevent(caseReleaseTime-t0, <span class="hljs-number">1</span>)
+    }
+     <span class="hljs-comment">//&#x8FD4;&#x56DE;&#x5BF9;&#x5E94;case&#x7684;&#x4E0B;&#x6807;&#xFF0C;&#x5982;&#x679C;&#x662F;&#x63A5;&#x6536;&#xFF0C;&#x8FD4;&#x56DE;recvOK,channel&#x5173;&#x95ED;&#x65F6;&#x4E3A;false</span>
+    <span class="hljs-keyword">return</span> casi, recvOK
+
+<span class="hljs-comment">//&#x53D1;&#x9001;&#x65F6;channel&#x5DF2;&#x5173;&#x95ED;&#xFF0C;&#x89E3;&#x9501;channel&#xFF0C;&#x76F4;&#x63A5;panic</span>
+sclose:
+    <span class="hljs-comment">// send on closed channel</span>
+    selunlock(scases, lockorder)
+    <span class="hljs-built_in">panic</span>(plainError(<span class="hljs-string">&quot;send on closed channel&quot;</span>))
+}
+</code></pre>
+<h5 id="recv&#x63A5;&#x6536;&#x65B9;&#x6CD5;">recv&#x63A5;&#x6536;&#x65B9;&#x6CD5;</h5>
+<pre><code class="lang-go"><span class="hljs-comment">// recv &#x5728;&#x5168;&#x901A;&#x9053; c &#x4E0A;&#x5904;&#x7406;&#x63A5;&#x6536;&#x64CD;&#x4F5C;&#x3002;</span>
+<span class="hljs-comment">// &#x6709;&#x4E24;&#x90E8;&#x5206;&#xFF1A;</span>
+<span class="hljs-comment">// 1) &#x53D1;&#x9001;&#x8005; sg &#x53D1;&#x9001;&#x7684;&#x503C;&#x88AB;&#x653E;&#x5165;&#x901A;&#x9053;&#x4E2D;&#xFF0C;&#x53D1;&#x9001;&#x8005;&#x88AB;&#x5524;&#x9192;&#x7EE7;&#x7EED;&#x5176;&#x5FEB;&#x4E50;&#x7684;&#x65B9;&#x5F0F;&#x3002;</span>
+<span class="hljs-comment">// 2) &#x63A5;&#x6536;&#x8005;&#x63A5;&#x6536;&#x5230;&#x7684;&#x503C;&#xFF08;&#x5F53;&#x524D;G&#xFF09;&#x5199;&#x5165;ep&#x3002;</span>
+<span class="hljs-comment">// &#x5BF9;&#x4E8E;&#x540C;&#x6B65;&#x901A;&#x9053;&#xFF0C;&#x4E24;&#x4E2A;&#x503C;&#x76F8;&#x540C;&#x3002;</span>
+<span class="hljs-comment">// &#x5BF9;&#x4E8E;&#x5F02;&#x6B65;&#x901A;&#x9053;&#xFF0C;&#x63A5;&#x6536;&#x65B9;&#x4ECE;&#x901A;&#x9053;&#x7F13;&#x51B2;&#x533A;&#x83B7;&#x53D6;&#x6570;&#x636E;&#xFF0C;&#x53D1;&#x9001;&#x65B9;&#x7684;&#x6570;&#x636E;&#x653E;&#x5165;&#x901A;&#x9053;&#x7F13;&#x51B2;&#x533A;&#x3002;</span>
+<span class="hljs-comment">// &#x901A;&#x9053; c &#x5FC5;&#x987B;&#x5DF2;&#x6EE1;&#x5E76;&#x5DF2;&#x9501;&#x5B9A;&#x3002; recv &#x4F7F;&#x7528; unlockf &#x89E3;&#x9501; c&#x3002; sg &#x5FC5;&#x987B;&#x5DF2;&#x7ECF;&#x4ECE; c &#x51FA;&#x5217;&#x3002;</span>
+<span class="hljs-comment">// &#x975E; nil ep &#x5FC5;&#x987B;&#x6307;&#x5411;&#x5806;&#x6216;&#x8C03;&#x7528;&#x8005;&#x7684;&#x5806;&#x6808;&#x3002;</span>
+<span class="hljs-keyword">func</span> recv(c *hchan, sg *sudog, ep unsafe.Pointer, unlockf <span class="hljs-keyword">func</span>(), skip <span class="hljs-keyword">int</span>) {
+    <span class="hljs-comment">//&#x5982;&#x679C;&#x4E3A;&#x975E;&#x7F13;&#x51B2;&#x533A;</span>
+    <span class="hljs-keyword">if</span> c.dataqsiz == <span class="hljs-number">0</span> {
+        <span class="hljs-keyword">if</span> raceenabled {
+            racesync(c, sg)
+        }
+        <span class="hljs-keyword">if</span> ep != <span class="hljs-literal">nil</span> {
+            <span class="hljs-comment">// &#x4ECE;sender&#x961F;&#x5217;&#x4E2D;&#x76F4;&#x63A5;&#x590D;&#x5236;&#x6570;&#x636E;</span>
+            recvDirect(c.elemtype, sg, ep)
+        }
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-comment">// &#x961F;&#x5217;&#x5DF2;&#x6EE1;&#x3002; &#x83B7;&#x53D6;&#x961F;&#x5217;&#x5934;&#x90E8;&#x7684;&#x9879;&#x76EE;&#x3002; </span>
+        <span class="hljs-comment">// &#x4F7F;&#x53D1;&#x4EF6;&#x4EBA;&#x5C06;&#x5176;&#x9879;&#x76EE;&#x6392;&#x5728;&#x961F;&#x5217;&#x7684;&#x5C3E;&#x90E8;&#x3002; </span>
+        <span class="hljs-comment">// &#x7531;&#x4E8E;&#x961F;&#x5217;&#x5DF2;&#x6EE1;&#xFF0C;&#x5B83;&#x4EEC;&#x90FD;&#x662F;&#x540C;&#x4E00;&#x4E2A;&#x69FD;&#x3002;</span>
+        qp := chanbuf(c, c.recvx)
+        <span class="hljs-keyword">if</span> raceenabled {
+            racenotify(c, c.recvx, <span class="hljs-literal">nil</span>)
+            racenotify(c, c.recvx, sg)
+        }
+        <span class="hljs-comment">//&#x5982;&#x679C;&#x63A5;&#x53D7;&#x53D8;&#x91CF;&#x4E0D;&#x4E3A;&#x7A7A;&#xFF0C;&#x7B26;&#x5408;&#x6570;&#x636E;&#x5230;ep</span>
+        <span class="hljs-keyword">if</span> ep != <span class="hljs-literal">nil</span> {
+            typedmemmove(c.elemtype, ep, qp)
+        }
+        <span class="hljs-comment">//&#x4ECE;&#x7F13;&#x51B2;&#x533A;&#x590D;&#x5236;&#x6570;&#x636E;</span>
+        typedmemmove(c.elemtype, qp, sg.elem)
+        c.recvx++
+        <span class="hljs-keyword">if</span> c.recvx == c.dataqsiz {
+            c.recvx = <span class="hljs-number">0</span>
+        }
+        c.sendx = c.recvx <span class="hljs-comment">// c.sendx = (c.sendx+1) % c.dataqsiz</span>
+    }
+    sg.elem = <span class="hljs-literal">nil</span>
+    gp := sg.g
+    <span class="hljs-comment">//&#x89E3;&#x9501;channel</span>
+    unlockf()
+    <span class="hljs-comment">//&#x53D1;&#x9001;&#x8005;&#x7684;param&#x8BBE;&#x7F6E;</span>
+    gp.param = unsafe.Pointer(sg)
+    sg.success = <span class="hljs-literal">true</span>
+    <span class="hljs-keyword">if</span> sg.releasetime != <span class="hljs-number">0</span> {
+        sg.releasetime = cputicks()
+    }
+    <span class="hljs-comment">//&#x5524;&#x9192;goroutine</span>
+    goready(gp, skip+<span class="hljs-number">1</span>)
+}
+</code></pre>
+<h5 id="send&#x65B9;&#x6CD5;&#xFF1A;">send&#x65B9;&#x6CD5;&#xFF1A;</h5>
+<pre><code class="lang-go"><span class="hljs-comment">// send &#x5904;&#x7406;&#x7A7A;&#x901A;&#x9053;&#x4E0A;&#x7684;&#x53D1;&#x9001;&#x64CD;&#x4F5C; c.</span>
+<span class="hljs-comment">// &#x53D1;&#x9001;&#x8005;&#x53D1;&#x9001;&#x7684;&#x503C; ep &#x88AB;&#x590D;&#x5236;&#x5230;&#x63A5;&#x6536;&#x8005; sg&#x3002;</span>
+<span class="hljs-comment">// &#x7136;&#x540E;&#x63A5;&#x6536;&#x5668;&#x88AB;&#x5524;&#x9192;&#xFF0C;&#x7EE7;&#x7EED;&#x5B83;&#x7684;&#x5FEB;&#x4E50;&#x4E4B;&#x8DEF;&#x3002;</span>
+<span class="hljs-comment">// &#x901A;&#x9053; c &#x5FC5;&#x987B;&#x4E3A;&#x7A7A;&#x4E14;&#x5DF2;&#x9501;&#x5B9A;&#x3002; &#x4F7F;&#x7528; unlockf &#x53D1;&#x9001;&#x89E3;&#x9501; c&#x3002;</span>
+<span class="hljs-comment">// sg &#x5FC5;&#x987B;&#x5DF2;&#x7ECF;&#x4ECE; c &#x4E2D;&#x51FA;&#x5217;&#x3002;</span>
+<span class="hljs-comment">// ep &#x5FC5;&#x987B;&#x975E; nil &#x5E76;&#x6307;&#x5411;&#x5806;&#x6216;&#x8C03;&#x7528;&#x8005;&#x7684;&#x5806;&#x6808;&#x3002;</span>
+<span class="hljs-keyword">func</span> send(c *hchan, sg *sudog, ep unsafe.Pointer, unlockf <span class="hljs-keyword">func</span>(), skip <span class="hljs-keyword">int</span>) {
+    <span class="hljs-keyword">if</span> raceenabled {
+        <span class="hljs-keyword">if</span> c.dataqsiz == <span class="hljs-number">0</span> {
+            racesync(c, sg)
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-comment">// Pretend we go through the buffer, even though</span>
+            <span class="hljs-comment">// we copy directly. Note that we need to increment</span>
+            <span class="hljs-comment">// the head/tail locations only when raceenabled.</span>
+            racenotify(c, c.recvx, <span class="hljs-literal">nil</span>)
+            racenotify(c, c.recvx, sg)
+            c.recvx++
+            <span class="hljs-keyword">if</span> c.recvx == c.dataqsiz {
+                c.recvx = <span class="hljs-number">0</span>
+            }
+            c.sendx = c.recvx <span class="hljs-comment">// c.sendx = (c.sendx+1) % c.dataqsiz</span>
+        }
+    }
+    <span class="hljs-keyword">if</span> sg.elem != <span class="hljs-literal">nil</span> {
+        sendDirect(c.elemtype, sg, ep)
+        sg.elem = <span class="hljs-literal">nil</span>
+    }
+    gp := sg.g
+    unlockf()
+    gp.param = unsafe.Pointer(sg)
+    sg.success = <span class="hljs-literal">true</span>
+    <span class="hljs-keyword">if</span> sg.releasetime != <span class="hljs-number">0</span> {
+        sg.releasetime = cputicks()
+    }
+    goready(gp, skip+<span class="hljs-number">1</span>)
+}
+</code></pre>
+<h5 id="fastrandn">fastrandn</h5>
+<pre><code class="lang-go"><span class="hljs-comment">//go/src/runtime/stubs.go</span>
+<span class="hljs-comment">//go:nosplit</span>
+<span class="hljs-keyword">func</span> fastrandn(n <span class="hljs-keyword">uint32</span>) <span class="hljs-keyword">uint32</span> {
+    <span class="hljs-comment">// &#x8FD9;&#x7C7B;&#x4F3C;&#x4E8E; fastrand() % n&#xFF0C;&#x4F46;&#x901F;&#x5EA6;&#x66F4;&#x5FEB;&#x3002;</span>
+    <span class="hljs-comment">// See https://lemire.me/blog/2016/06/27/a-fast-alternative-to-the-modulo-reduction/</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">uint32</span>(<span class="hljs-keyword">uint64</span>(fastrand()) * <span class="hljs-keyword">uint64</span>(n) &gt;&gt; <span class="hljs-number">32</span>)
+}
+</code></pre>
+<h5 id="getg">getg</h5>
+<pre><code class="lang-go"><span class="hljs-comment">//go/src/runtime/stubs.go</span>
+<span class="hljs-comment">// getg &#x8FD4;&#x56DE;&#x6307;&#x5411;&#x5F53;&#x524D; g &#x7684;&#x6307;&#x9488;&#x3002;</span>
+<span class="hljs-comment">// &#x7F16;&#x8BD1;&#x5668;&#x5C06;&#x6B64;&#x51FD;&#x6570;&#x7684;&#x8C03;&#x7528;&#x91CD;&#x5199;&#x4E3A;&#x76F4;&#x63A5;&#xFF08;&#x4ECE; TLS &#x6216;&#x4ECE;&#x4E13;&#x7528;&#x5BC4;&#x5B58;&#x5668;&#xFF09;&#x83B7;&#x53D6; g &#x7684;&#x6307;&#x4EE4;&#x3002;</span>
+<span class="hljs-keyword">func</span> getg() *g
+</code></pre>
+<h5 id="fastrand">fastrand</h5>
+<pre><code class="lang-go"><span class="hljs-comment">//go/src/runtime/stubs.go</span>
+<span class="hljs-comment">//go:nosplit</span>
+<span class="hljs-keyword">func</span> fastrand() <span class="hljs-keyword">uint32</span> {
+    mp := getg().m
+    <span class="hljs-comment">// Implement xorshift64+: 2 32-bit xorshift sequences added together.</span>
+    <span class="hljs-comment">// Shift triplet [17,7,16] was calculated as indicated in Marsaglia&apos;s</span>
+    <span class="hljs-comment">// Xorshift paper: https://www.jstatsoft.org/article/view/v008i14/xorshift.pdf</span>
+    <span class="hljs-comment">// This generator passes the SmallCrush suite, part of TestU01 framework:</span>
+    <span class="hljs-comment">// http://simul.iro.umontreal.ca/testu01/tu01.html</span>
+    s1, s0 := mp.fastrand[<span class="hljs-number">0</span>], mp.fastrand[<span class="hljs-number">1</span>]
+    s1 ^= s1 &lt;&lt; <span class="hljs-number">17</span>
+    s1 = s1 ^ s0 ^ s1&gt;&gt;<span class="hljs-number">7</span> ^ s0&gt;&gt;<span class="hljs-number">16</span>
+    mp.fastrand[<span class="hljs-number">0</span>], mp.fastrand[<span class="hljs-number">1</span>] = s0, s1
+    <span class="hljs-keyword">return</span> s0 + s1
+}
+</code></pre>
+<h5 id="sellock">sellock</h5>
+<pre><code class="lang-go"><span class="hljs-keyword">func</span> sellock(scases []scase, lockorder []<span class="hljs-keyword">uint16</span>) {
+    <span class="hljs-keyword">var</span> c *hchan
+    <span class="hljs-keyword">for</span> _, o := <span class="hljs-keyword">range</span> lockorder {
+        c0 := scases[o].c
+        <span class="hljs-keyword">if</span> c0 != c {
+            c = c0
+            lock(&amp;c.lock)
+        }
+    }
+}
+</code></pre>
+<h3 id="&#x53C2;&#x8003;&#x8D44;&#x6599;">&#x53C2;&#x8003;&#x8D44;&#x6599;</h3>
+<p><a href="https://www.runoob.com/go/go-select-statement.html" target="_blank">Go &#x8BED;&#x8A00; select &#x8BED;&#x53E5;</a></p>
+<p><a href="https://studygolang.com/articles/34559" target="_blank">Go select</a></p>
+<p><a href="https://blog.csdn.net/dagu131/article/details/108385060" target="_blank">Golang &#x6DF1;&#x5165;&#x6E90;&#x7801; &#x2014;&#x2014; select &#x4E0E; channel</a></p>
+<p><a href="https://segmentfault.com/a/1190000040274486" target="_blank"><a href="https://segmentfault.com/a/1190000040274486" target="_blank">golang-select&#x8BE6;&#x89E3;</a></a></p>
 
                                 
                                 </section>
@@ -761,7 +1482,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"select","level":"1.2.3.2","depth":3,"next":{"title":"垃圾收集","level":"1.2.3.3","depth":3,"path":"golang/Interview_questions/gc.md","ref":"golang/Interview_questions/gc.md","articles":[]},"previous":{"title":"复合数据类型","level":"1.2.3.1","depth":3,"path":"golang/Interview_questions/compound_data_type.md","ref":"golang/Interview_questions/compound_data_type.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["expandable-chapters","livereload"],"pluginsConfig":{"expandable-chapters":{},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"golang/Interview_questions/select.md","mtime":"2021-12-16T16:02:10.546Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-12-16T16:15:29.071Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"select","level":"1.2.3.2","depth":3,"next":{"title":"垃圾收集","level":"1.2.3.3","depth":3,"path":"golang/Interview_questions/gc.md","ref":"golang/Interview_questions/gc.md","articles":[]},"previous":{"title":"复合数据类型","level":"1.2.3.1","depth":3,"path":"golang/Interview_questions/compound_data_type.md","ref":"golang/Interview_questions/compound_data_type.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["expandable-chapters","livereload"],"pluginsConfig":{"expandable-chapters":{},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"golang/Interview_questions/select.md","mtime":"2021-12-20T15:54:46.463Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-12-20T15:56:05.512Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>
