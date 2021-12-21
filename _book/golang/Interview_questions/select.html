@@ -719,18 +719,18 @@
                                 
                                 <h1 id="select">select</h1>
 <ul>
-<li>Go&#x7684;select&#x8BED;&#x53E5;&#x662F;&#x4E00;&#x79CD;&#x4EC5;&#x80FD;&#x7528;&#x4E8E;channl&#x53D1;&#x9001;&#x548C;&#x63A5;&#x6536;&#x6D88;&#x606F;&#x7684;&#x4E13;&#x7528;&#x8BED;&#x53E5;&#xFF0C;&#x6B64;&#x8BED;&#x53E5;&#x8FD0;&#x884C;&#x671F;&#x95F4;&#x662F;&#x963B;&#x585E;&#x7684;&#xFF1B;&#x5F53;select&#x4E2D;&#x6CA1;&#x6709;case&#x8BED;&#x53E5;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4F1A;&#x963B;&#x585E;&#x5F53;&#x524D;groutine&#x3002;</li>
+<li>Go&#x7684;select&#x8BED;&#x53E5;&#x662F;&#x4E00;&#x79CD;&#x4EC5;&#x80FD;&#x7528;&#x4E8E;channel&#x53D1;&#x9001;&#x548C;&#x63A5;&#x6536;&#x6D88;&#x606F;&#x7684;&#x4E13;&#x7528;&#x8BED;&#x53E5;&#xFF0C;&#x6B64;&#x8BED;&#x53E5;&#x8FD0;&#x884C;&#x671F;&#x95F4;&#x662F;&#x963B;&#x585E;&#x7684;&#xFF1B;&#x5F53;select&#x4E2D;&#x6CA1;&#x6709;case&#x8BED;&#x53E5;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x4F1A;&#x963B;&#x585E;&#x5F53;&#x524D;groutine&#x3002;</li>
 <li>select&#x662F;Golang&#x5728;&#x8BED;&#x8A00;&#x5C42;&#x9762;&#x63D0;&#x4F9B;&#x7684;I/O&#x591A;&#x8DEF;&#x590D;&#x7528;&#x7684;&#x673A;&#x5236;&#xFF0C;&#x5176;&#x4E13;&#x95E8;&#x7528;&#x6765;&#x68C0;&#x6D4B;&#x591A;&#x4E2A;channel&#x662F;&#x5426;&#x51C6;&#x5907;&#x5B8C;&#x6BD5;&#xFF1A;&#x53EF;&#x8BFB;&#x6216;&#x53EF;&#x5199;&#x3002;</li>
 </ul>
 <h3 id="&#x7528;&#x6CD5;">&#x7528;&#x6CD5;</h3>
 <ul>
-<li><p>&#x6BCF;&#x4E2A; case &#x90FD;&#x5FC5;&#x987B;&#x662F;&#x4E00;&#x4E2A;&#x901A;&#x4FE1;</p>
+<li><p>&#x6BCF;&#x4E2A; case &#x90FD;&#x5FC5;&#x987B;&#x662F;&#x4E00;&#x4E2A;channel</p>
 </li>
 <li><p>&#x6240;&#x6709; channel &#x8868;&#x8FBE;&#x5F0F;&#x90FD;&#x4F1A;&#x88AB;&#x6C42;&#x503C;</p>
 </li>
 <li><p>&#x6240;&#x6709;&#x88AB;&#x53D1;&#x9001;&#x7684;&#x8868;&#x8FBE;&#x5F0F;&#x90FD;&#x4F1A;&#x88AB;&#x6C42;&#x503C;</p>
 </li>
-<li><p>&#x5982;&#x679C;&#x4EFB;&#x610F;&#x67D0;&#x4E2A;&#x901A;&#x4FE1;&#x53EF;&#x4EE5;&#x8FDB;&#x884C;&#xFF0C;&#x5B83;&#x5C31;&#x6267;&#x884C;&#xFF0C;&#x5176;&#x4ED6;&#x88AB;&#x5FFD;&#x7565;&#x3002;</p>
+<li><p>&#x5982;&#x679C;&#x4EFB;&#x610F;&#x67D0;&#x4E2A;channel&#x53EF;&#x4EE5;&#x8FDB;&#x884C;&#xFF0C;&#x5B83;&#x5C31;&#x6267;&#x884C;&#xFF0C;&#x5176;&#x4ED6;&#x88AB;&#x5FFD;&#x7565;&#x3002;</p>
 </li>
 <li><p>&#x5982;&#x679C;&#x6709;&#x591A;&#x4E2A; case &#x90FD;&#x53EF;&#x4EE5;&#x8FD0;&#x884C;&#xFF0C;Select &#x4F1A;&#x968F;&#x673A;&#x516C;&#x5E73;&#x5730;&#x9009;&#x51FA;&#x4E00;&#x4E2A;&#x6267;&#x884C;&#x3002;&#x5176;&#x4ED6;&#x4E0D;&#x4F1A;&#x6267;&#x884C;&#x3002;</p>
 <p>  &#x5426;&#x5219;&#xFF1A;</p>
@@ -743,6 +743,7 @@
 </li>
 </ul>
 <h3 id="&#x6E90;&#x7801;&#x5B66;&#x4E60;1171">&#x6E90;&#x7801;&#x5B66;&#x4E60;(1.17.1)</h3>
+<p>&#x4EE5;&#x4E0B;&#x5185;&#x5BB9;&#x4E3B;&#x8981;&#x53C2;&#x8003;&#x4E86;<a href="https://segmentfault.com/a/1190000040274486" target="_blank">golang-select&#x8BE6;&#x89E3;</a>&#x7684;&#x6E90;&#x7801;&#x5206;&#x6790;&#x3002;</p>
 <h4 id="&#x6570;&#x636E;&#x7ED3;&#x6784;">&#x6570;&#x636E;&#x7ED3;&#x6784;</h4>
 <ul>
 <li><p>select&#x4E2D;case</p>
@@ -946,6 +947,7 @@
         j := i
         <span class="hljs-comment">// Start with the pollorder to permute cases on the same channel.</span>
         c := scases[pollorder[i]].c
+        <span class="hljs-comment">//channel&#x6307;&#x9488;&#x6570;&#x503C;&#x5927;&#x5C0F;&#x6BD4;&#x8F83;</span>
         <span class="hljs-keyword">for</span> j &gt; <span class="hljs-number">0</span> &amp;&amp; scases[lockorder[(j<span class="hljs-number">-1</span>)/<span class="hljs-number">2</span>]].c.sortkey() &lt; c.sortkey() {
             k := (j - <span class="hljs-number">1</span>) / <span class="hljs-number">2</span>
             lockorder[j] = lockorder[k]
@@ -1438,7 +1440,7 @@ sclose:
 <p><a href="https://www.runoob.com/go/go-select-statement.html" target="_blank">Go &#x8BED;&#x8A00; select &#x8BED;&#x53E5;</a></p>
 <p><a href="https://studygolang.com/articles/34559" target="_blank">Go select</a></p>
 <p><a href="https://blog.csdn.net/dagu131/article/details/108385060" target="_blank">Golang &#x6DF1;&#x5165;&#x6E90;&#x7801; &#x2014;&#x2014; select &#x4E0E; channel</a></p>
-<p><a href="https://segmentfault.com/a/1190000040274486" target="_blank"><a href="https://segmentfault.com/a/1190000040274486" target="_blank">golang-select&#x8BE6;&#x89E3;</a></a></p>
+<p><a href="https://segmentfault.com/a/1190000040274486" target="_blank">golang-select&#x8BE6;&#x89E3;</a></p>
 
                                 
                                 </section>
@@ -1482,7 +1484,7 @@ sclose:
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"select","level":"1.2.3.2","depth":3,"next":{"title":"垃圾收集","level":"1.2.3.3","depth":3,"path":"golang/Interview_questions/gc.md","ref":"golang/Interview_questions/gc.md","articles":[]},"previous":{"title":"复合数据类型","level":"1.2.3.1","depth":3,"path":"golang/Interview_questions/compound_data_type.md","ref":"golang/Interview_questions/compound_data_type.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["expandable-chapters","livereload"],"pluginsConfig":{"expandable-chapters":{},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"golang/Interview_questions/select.md","mtime":"2021-12-20T15:54:46.463Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-12-20T15:56:05.512Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"select","level":"1.2.3.2","depth":3,"next":{"title":"垃圾收集","level":"1.2.3.3","depth":3,"path":"golang/Interview_questions/gc.md","ref":"golang/Interview_questions/gc.md","articles":[]},"previous":{"title":"复合数据类型","level":"1.2.3.1","depth":3,"path":"golang/Interview_questions/compound_data_type.md","ref":"golang/Interview_questions/compound_data_type.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["expandable-chapters"],"pluginsConfig":{"expandable-chapters":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"golang/Interview_questions/select.md","mtime":"2021-12-21T15:22:24.234Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-12-21T16:22:50.147Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>
@@ -1493,10 +1495,6 @@ sclose:
     
         
         <script src="../../gitbook/gitbook-plugin-expandable-chapters/expandable-chapters.js"></script>
-        
-    
-        
-        <script src="../../gitbook/gitbook-plugin-livereload/plugin.js"></script>
         
     
         

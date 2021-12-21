@@ -1,17 +1,17 @@
 # select
 
-- Go的select语句是一种仅能用于channl发送和接收消息的专用语句，此语句运行期间是阻塞的；当select中没有case语句的时候，会阻塞当前groutine。
+- Go的select语句是一种仅能用于channel发送和接收消息的专用语句，此语句运行期间是阻塞的；当select中没有case语句的时候，会阻塞当前groutine。
 - select是Golang在语言层面提供的I/O多路复用的机制，其专门用来检测多个channel是否准备完毕：可读或可写。
 
 ### 用法
 
-- 每个 case 都必须是一个通信
+- 每个 case 都必须是一个channel
 
 - 所有 channel 表达式都会被求值
 
 - 所有被发送的表达式都会被求值
 
-- 如果任意某个通信可以进行，它就执行，其他被忽略。
+- 如果任意某个channel可以进行，它就执行，其他被忽略。
 
 - 如果有多个 case 都可以运行，Select 会随机公平地选出一个执行。其他不会执行。
 
@@ -23,6 +23,8 @@
 - `select{}`永远阻塞当前 Goroutine。
 
 ### 源码学习(1.17.1)
+
+以下内容主要参考了[golang-select详解](https://segmentfault.com/a/1190000040274486)的源码分析。
 
 #### 数据结构
 
@@ -239,6 +241,7 @@ func selectgo(cas0 *scase, order0 *uint16, pc0 *uintptr, nsends, nrecvs int, blo
 		j := i
 		// Start with the pollorder to permute cases on the same channel.
 		c := scases[pollorder[i]].c
+        //channel指针数值大小比较
 		for j > 0 && scases[lockorder[(j-1)/2]].c.sortkey() < c.sortkey() {
 			k := (j - 1) / 2
 			lockorder[j] = lockorder[k]
@@ -755,4 +758,4 @@ func sellock(scases []scase, lockorder []uint16) {
 
 [Golang 深入源码 —— select 与 channel](https://blog.csdn.net/dagu131/article/details/108385060)
 
-[[golang-select详解](https://segmentfault.com/a/1190000040274486)](https://segmentfault.com/a/1190000040274486)
+[golang-select详解](https://segmentfault.com/a/1190000040274486)
