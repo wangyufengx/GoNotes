@@ -158,7 +158,6 @@ selectgo函数内部逻辑：
 1. 使用fastrandn算法把scases数组的索引重新编排顺序。
 2. 根据新的索引顺序对hchan进行堆排序来获取case的锁定顺序。（保证 n log n 时间和恒定的堆栈占用空间）
 3. 锁定所有channel。
-
 4. 遍历所有channel，判断是否有可读或者可写的，如果有，解锁channel,返回对应数据。
 5. 否则，判断有没有default，如果有，解锁channel，返回default对应scase。
 6. 否则，把当前groutian添加到所有channel的等待队列里，解锁所有channel，等待被唤醒。
